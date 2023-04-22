@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "app",
     "name": "pokemon",
     "slug": "pokemon",
     "version": "1.0.0",
