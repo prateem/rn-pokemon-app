@@ -85,6 +85,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                     component={Pokedex}
                     options={{
                         title: "Pokédex",
+                        tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
                             <Image source={require("../../../assets/pokeball.png")} style={{width: 24, height: 24}} />
                         )}} />
@@ -93,6 +94,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                     component={Trainers}
                     options={{
                         title: "Trainers",
+                        tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
                             <Image source={require("../../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
                         )}} />
@@ -101,6 +103,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                     component={Gyms}
                     options={{
                         title: "Gyms",
+                        tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
                             <Image source={require("../../../assets/building.png")} style={{width: 24, height: 24}} />
                         )}} />
