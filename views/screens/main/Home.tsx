@@ -1,5 +1,5 @@
 import React, {useRef, useState, useMemo, useEffect} from 'react';
-import { View } from 'react-native';
+import {Image, View} from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack'
 import { BottomTabHeaderProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -27,7 +27,7 @@ const Tab = createBottomTabNavigator<HomeTab>()
 
 export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>) {
     const [showMenu, setShowMenu] = useState(false)
-    const bottomSheetRef = useRef<BottomSheet>(null)
+    const bottomSheetRef = useRef<BottomSheet | null>(null)
     const snapPoints = useMemo(() => ['95%'], []);
     const appState = useAppState()
     const initialUrl = Linking.useURL()
@@ -80,9 +80,30 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                     })
                 }
             }}>
-                <Tab.Screen name="pokedex" component={Pokedex} options={{ title: "Pokédex" }} />
-                <Tab.Screen name="trainers" component={Trainers} options={{ title: "Trainers" }} />
-                <Tab.Screen name="gyms" component={Gyms} options={{ title: "Gyms" }} />
+                <Tab.Screen
+                    name="pokedex"
+                    component={Pokedex}
+                    options={{
+                        title: "Pokédex",
+                        tabBarIcon: (tabInfo) => (
+                            <Image source={require("../../../assets/pokeball.png")} style={{width: 24, height: 24}} />
+                        )}} />
+                <Tab.Screen
+                    name="trainers"
+                    component={Trainers}
+                    options={{
+                        title: "Trainers",
+                        tabBarIcon: (tabInfo) => (
+                            <Image source={require("../../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
+                        )}} />
+                <Tab.Screen
+                    name="gyms"
+                    component={Gyms}
+                    options={{
+                        title: "Gyms",
+                        tabBarIcon: (tabInfo) => (
+                            <Image source={require("../../../assets/building.png")} style={{width: 24, height: 24}} />
+                        )}} />
             </Tab.Navigator>
 
             {showMenu && (
