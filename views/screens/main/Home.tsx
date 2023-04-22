@@ -87,7 +87,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Pokédex",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image source={require("../../../assets/pokeball.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../../assets/pokeball.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="trainers"
@@ -96,7 +96,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Trainers",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image source={require("../../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="gyms"
@@ -105,7 +105,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Gyms",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image source={require("../../../assets/building.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../../assets/building.png")} style={{width: 24, height: 24}} />
                         )}} />
             </Tab.Navigator>
 
