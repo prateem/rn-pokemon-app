@@ -1,31 +1,24 @@
-import {AppRoute} from "./AppRouter";
-import {HomeTab} from "../views/screens/main/Home";
+import {AppRoute} from "../flows/core/AuthenticatedFlow";
 import * as Linking from 'expo-linking';
+import {CommonActions, TabActions, TabActionType} from "@react-navigation/native";
 
-export type ScreenDeepLink<RouteName extends keyof AppRoute> = {
-    route: RouteName,
-    params: AppRoute[RouteName]
-}
-
-export type TabDeepLink<TabName extends keyof HomeTab> = {
-    tab: TabName
+export interface DeepLinkAction {
+    action: CommonActions.Action | TabActionType
 }
 
 /**
- * Processes deep links in the format of:
- *     `app://tab[/section/param]`
- * where `[/section/param]` (pairing required) is optional (and repeatable).
+ * Processes app route pathing into navigation controller actions.
  *
- * @example Pikachu
- * `app://pokemon/pokemon/25`
+ * @example Show Pikachu entry
+ * `/pokemon/25`
  *
- * @example Youngster Joey's Ratata
- * `app://trainers/trainer/1/pokemon/19`
+ * @example Show Youngster Joey's Ratata
+ * `/trainer/1/pokemon/19`
  *
- * @example Swimmer Briana's Seaking from Misty's gym
- * `app://gyms/gym/10/trainer/10005/pokemon/119`
+ * @example Show a Seaking of Swimmer Briana from Misty's gym
+ * `/gym/10/trainer/10005/pokemon/119`
  */
-export function processDeepLink(url: string): Array<any> {
+export function processDeepLink(url: string): Array<DeepLinkAction> {
     const { hostname, path, queryParams } = Linking.parse(url);
 
     console.log(
@@ -34,95 +27,59 @@ export function processDeepLink(url: string): Array<any> {
         )}`
     );
 
-    return []
-
-    const components = url.pathname
-        .replace(/^\/+|\/+$/g, '')
-        .split('/')
-
-    const results: any[] = []
-    if (components.length >= 1) {
-        const tab = components[0]
-        if (tab as keyof HomeTab) {
-            results.push({ tab })
-        }
-
-        const path = components.slice(1, components.length)
-        const processed = processPath(path.join('/'))
-        results.push(...processed)
-    }
-
-    return results
+    return processPath(path)
 }
 
-/**
- * Processes screen path in the format of:
- *     `[/section/param]` pairings
- * where the pairing is required (and repeatable).
- *
- * @example Pikachu
- * `/pokemon/25`
- *
- * @example Youngster Joey's Ratata
- * `/trainer/1/pokemon/19`
- *
- * @example Swimmer Briana's Seaking from Misty's gym
- * `/gym/10/trainer/10005/pokemon/119`
- */
-export function processPath(path: string): Array<ScreenDeepLink<any>> {
-    const components = path
+function processPath(path: string | null): Array<DeepLinkAction> {
+    if (!path) {
+        return []
+    }
+
+    const pathComponents = path
         .replace(/^\/+|\/+$/g, '')
         .split('/')
 
-    const results: ScreenDeepLink<any>[] = []
-    if (components.length >= 2) {
+    const results: DeepLinkAction[] = []
+    if (pathComponents.length > 0) {
         let idx = 0
 
-        // each nested screen needs a corresponding parameter
-        while (components.length > idx + 1) {
-            const screen = components[idx]
-            const param = components[idx+1]
+        while (pathComponents.length > idx) {
+            const target = pathComponents[idx++]
 
             try {
-                if (screen as keyof AppRoute) {
-                    const r = screen as keyof AppRoute
-                    if (r == 'pokemon') {
+                switch (target) {
+                    // Tab navigation
+                    case 'pokedex':
+                    case 'gyms':
+                    case 'trainers': {
+                        results.push({ action: TabActions.jumpTo(target) })
+                        break
+                    }
+
+                    // Screen navigation
+                    case 'pokemon': {
+                        const param = pathComponents[idx++] // this entry expects a param
                         const params: AppRoute['pokemon'] = {number: parseInt(param)}
-                        results.push({route: screen, params})
-                    } else if (r == 'trainer') {
+                        results.push({ action: CommonActions.navigate(target, params) })
+                        break
+                    }
+                    case 'trainer': {
+                        const param = pathComponents[idx++] // this entry expects a param
                         const params: AppRoute['trainer'] = {id: parseInt(param)}
-                        results.push({route: screen, params})
-                    } else if (r == 'gym') {
+                        results.push({ action: CommonActions.navigate(target, params) })
+                        break
+                    }
+                    case 'gym': {
+                        const param = pathComponents[idx++] // this entry expects a param
                         const params: AppRoute['gym'] = {number: parseInt(param)}
-                        results.push({route: screen, params})
+                        results.push({ action: CommonActions.navigate(target, params) })
                     }
                 }
             } catch (e) {
                 // eat it gracefully
             }
-
-            idx += 2
         }
     }
 
     return results
-}
-
-
-export function isScreenDeepLink(link: any): link is ScreenDeepLink<keyof AppRoute> {
-    if ('route' in link && 'params' in link) {
-        const route = link['route']
-        return route satisfies keyof AppRoute
-    }
-
-    return false
-}
-
-export function isTabDeepLink(link: any): link is TabDeepLink<keyof HomeTab> {
-    if ('tab' in link) {
-        const tab = link['tab']
-        return tab satisfies keyof HomeTab
-    }
-
-    return false
 }

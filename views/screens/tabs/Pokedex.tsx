@@ -6,7 +6,7 @@ import PokemonCard from '../../components/PokemonCard'
 import styles from '../../styles'
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack'
-import { AppRoute } from '../../../core/AppRouter'
+import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
 import Loader from "../../components/core/Loader";
 import {DataLoadingState} from "../../../services/DataLoadingState";
 

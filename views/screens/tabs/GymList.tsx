@@ -6,7 +6,7 @@ import {DataLoadingState} from "../../../services/DataLoadingState";
 import styles from "../../styles";
 import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
-import {AppRoute} from "../../../core/AppRouter";
+import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
 import gymService from "../../../services/GymService";
 import Gym from "../../../models/Gym";
 import GymCard from "../../components/GymCard";

@@ -1,27 +1,38 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import {View, Text, Pressable, SafeAreaView, InteractionManager} from "react-native";
 import styles from "../../styles";
 import Authenticator from "../../../core/Authenticator";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { AppRoute } from "../../../core/AppRouter";
+import {useAppState} from "../../../core/AppState";
+import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
+import {CommonActions} from "@react-navigation/native";
 
 type AppMenuProps = {
     navigation: StackNavigationProp<AppRoute, 'home'>
 }
 
 export default function AppMenu({ navigation }: AppMenuProps) {
-    const authenticator = new Authenticator();
+    const authenticator = new Authenticator()
+    const appState = useAppState()
 
     return (
-        <View style={{alignSelf: "flex-start"}}>
-            <Text>Awesome 🎉</Text>
+        <SafeAreaView>
+            <View style={{alignSelf: "flex-start"}}>
+                <Text>Awesome 🎉</Text>
 
-            <Pressable onPress={(_) => {
-                authenticator.logout()
-                navigation.reset({ index: 0, routes: [{ name: "login" }] })
-            }}>
-                <Text style={styles.components.button}>Logout</Text>
-            </Pressable>
-        </View>
+                <Pressable onPress={(_) => {
+                    authenticator.logout()
+                    appState.update({
+                        user: null,
+                        sessionToken: null
+                    })
+                    InteractionManager.runAfterInteractions(() => {
+                        navigation.dispatch(CommonActions.reset({routes: [{name: 'onboarding'}]}))
+                    })
+                }}>
+                    <Text style={styles.components.button}>Logout</Text>
+                </Pressable>
+            </View>
+        </SafeAreaView>
     )
 }

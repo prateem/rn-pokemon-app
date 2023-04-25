@@ -1,21 +1,19 @@
 import React, {useRef, useState, useMemo, useEffect} from 'react';
-import {Image, View} from 'react-native';
+import {Image, Pressable, View} from 'react-native';
 import type { StackScreenProps } from '@react-navigation/stack'
-import { BottomTabHeaderProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import BottomSheet from '@gorhom/bottom-sheet';
-import {isScreenDeepLink, isTabDeepLink, processDeepLink, ScreenDeepLink, TabDeepLink} from "../../../core/DeepLink";
-import * as Linking from 'expo-linking';
+import {processDeepLink} from "../../core/DeepLink";
 
-import { AppRoute } from '../../../core/AppRouter';
-import AppMenu from '../../components/core/AppMenu';
-import MainHeader from './MainHeader'
-import Pokedex from '../tabs/Pokedex';
-import Trainers from '../tabs/TrainerList';
-import Gyms from '../tabs/GymList';
-import MenuBackdrop from '../../components/core/MenuBackdrop';
-import styles from '../../styles';
-import {TabActions} from "@react-navigation/native";
-import {useAppState} from "../../../core/AppState";
+import {AppRoute} from "../core/AuthenticatedFlow";
+import AppMenu from '../../views/components/core/AppMenu';
+import Pokedex from '../../views/screens/tabs/Pokedex';
+import Trainers from '../../views/screens/tabs/TrainerList';
+import Gyms from '../../views/screens/tabs/GymList';
+import MenuBackdrop from '../../views/components/core/MenuBackdrop';
+import styles from '../../views/styles';
+import {useAppState} from "../../core/AppState";
+import * as Linking from "expo-linking";
 
 export type HomeTab = {
     pokedex: undefined
@@ -30,7 +28,6 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
     const bottomSheetRef = useRef<BottomSheet | null>(null)
     const snapPoints = useMemo(() => ['95%'], []);
     const appState = useAppState()
-    const initialUrl = Linking.useURL()
 
     function toggleMenu() {
         setShowMenu(!showMenu)
@@ -39,47 +36,36 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
         }
     }
 
+    const initialUrl = Linking.useURL()
     useEffect(() => {
         if (initialUrl) {
-            const testDeepLink = processDeepLink(initialUrl)
-            appState.update({ deepLink: testDeepLink })
+            console.log("initialUrl: ", initialUrl)
+            const navigationActions = processDeepLink(initialUrl)
+            navigationActions.forEach((entry) => navigation.dispatch(entry.action))
         }
-    }, [])
-
-    useEffect(() => {
-        // Check for and handle deep link
-        const deepLink = appState.current.deepLink
-
-        if (deepLink && deepLink.length > 0) {
-            console.log("Handling DeepLink:", deepLink)
-
-            deepLink.forEach((link) => {
-                if (isScreenDeepLink(link)) {
-                    const screenDeepLink = link as ScreenDeepLink<any>
-                    navigation.navigate(screenDeepLink.route, screenDeepLink.params)
-                } else if (isTabDeepLink(link)) {
-                    const tabDeepLink = link as TabDeepLink<any>
-                    navigation.dispatch(TabActions.jumpTo(tabDeepLink.tab))
-                }
-            })
-
-            appState.update({ deepLink: [] })
-        }
-    }, [appState.current.deepLink])
+    }, [initialUrl])
 
     return (
         <View style={{
             flex: 1,
             overflow: 'hidden'
         }}>
-            <Tab.Navigator screenOptions={{
-                header: (props: BottomTabHeaderProps) => {
-                    return MainHeader({
-                        tabProps: props,
-                        onMenuButtonPress: () => { toggleMenu() }
-                    })
-                }
-            }}>
+            <Tab.Navigator
+                screenOptions={({route}) => ({
+                    headerStyle: styles.components.navigationBar,
+                    headerTintColor: "white",
+                    // @ts-ignore
+                    headerLeft: (route.name == 'home') ? undefined : () => {
+                        return (
+                            <Pressable onPress={ toggleMenu }>
+                                <Image
+                                    resizeMode='contain'
+                                    style={{ width: 32, height: 32, alignSelf: 'center', tintColor: "white", marginHorizontal: 12 }}
+                                    source={require('../../assets/menu.png')} />
+                            </Pressable>
+                        )
+                    }
+                })}>
                 <Tab.Screen
                     name="pokedex"
                     component={Pokedex}
@@ -87,7 +73,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Pokédex",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../../assets/pokeball.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/pokeball.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="trainers"
@@ -96,7 +82,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Trainers",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="gyms"
@@ -105,7 +91,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Gyms",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../../assets/building.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/building.png")} style={{width: 24, height: 24}} />
                         )}} />
             </Tab.Navigator>
 

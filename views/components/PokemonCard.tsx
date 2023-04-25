@@ -36,10 +36,12 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
                 ...styles.alignment.centered
             }}>
                 <Text style={{ ...styles.labels.normal, flex: 1, color: '#fff', fontWeight: 'bold' }}>{pokemon.name}</Text>
+
                 <Image
                     resizeMode='contain'
                     style={{ width: 40, height: 40, alignSelf: 'center', margin: 4 }}
                     source={{ uri: pokemon.spriteUrl }} />
+
             </View>
         )
     }

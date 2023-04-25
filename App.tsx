@@ -25,7 +25,7 @@ String.prototype.toTitleCase = function () {
 
 export default function App() {
     return (
-        <SafeAreaProvider>
+        // <SafeAreaProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <AppStateProvider>
                     <AppRouter />
@@ -33,6 +33,6 @@ export default function App() {
                     <StatusBar style="auto" />
                 </AppStateProvider>
             </GestureHandlerRootView>
-        </SafeAreaProvider>
+        // </SafeAreaProvider>
     )
 }

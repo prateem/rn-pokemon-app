@@ -2,27 +2,28 @@ import React, {createContext, PropsWithChildren, useContext, useState} from "rea
 import User from "../models/User"
 
 export interface AppState {
-    user?: User
-    sessionToken?: string,
-    deepLink?: Array<any>
+    user?: User | null
+    sessionToken?: string | null
+}
+
+interface AppStateManagement {
+    current: AppState,
+    update: (updates: Partial<AppState>) => void
 }
 
 const AppStateContext: React.Context<{
     current: AppState,
     update: (updates: Partial<AppState>) => void
-}> = createContext({ current: {}, update: (_) => { } })
+}> = createContext<AppStateManagement>({ current: {}, update: (_) => { } })
 
-export function useAppState(): {
-    current: AppState,
-    update: (updates: Partial<AppState>) => void
-} {
+export function useAppState(): AppStateManagement {
     return useContext(AppStateContext)
 }
 
 export function AppStateProvider(props: PropsWithChildren) {
     const [appState, setAppState] = useState<AppState>({})
 
-    const value = {
+    const value: AppStateManagement = {
         current: appState,
         update: (update: Partial<AppState>) => {
             setAppState({...appState, ...update})

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
-import {AppRoute} from '../../../core/AppRouter';
+import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
 import Loader from '../../components/core/Loader';
 import {DataLoadingState} from "../../../services/DataLoadingState";
 import {View, Text, ScrollView} from "react-native";

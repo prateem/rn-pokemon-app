@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { Text, View, TextInput, Pressable, Image } from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
-import { AppRoute } from '../../../core/AppRouter'
-import User from '../../../models/User'
-import Authenticator from '../../../core/Authenticator'
-import { useAppState } from '../../../core/AppState'
-import styles from '../../styles'
+import User from '../../models/User'
+import Authenticator from '../../core/Authenticator'
+import { useAppState } from '../../core/AppState'
+import styles from '../../views/styles'
+import {UnauthenticatedRoute} from "../core/UnauthenticatedFlow";
+import {StackActions} from "@react-navigation/native";
 
 interface Credentials {
     username: {
@@ -18,7 +19,7 @@ interface Credentials {
     }
 }
 
-export default function Login({ navigation }: StackScreenProps<AppRoute, 'login'>) {
+export default function Login({ navigation }: StackScreenProps<UnauthenticatedRoute, 'login'>) {
     const appState = useAppState();
     const [credentials, setCredentials] = useState<Credentials>({
         username: {
@@ -54,7 +55,7 @@ export default function Login({ navigation }: StackScreenProps<AppRoute, 'login'
                     sessionToken
                 })
 
-                navigation.replace('home');
+                navigation.dispatch(StackActions.replace('app'))
             })
     }
 

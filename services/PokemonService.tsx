@@ -1,6 +1,6 @@
 import dataInstance, {DataStore} from "../core/DataStore";
 import Pokemon from "../models/Pokemon";
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import axios from 'axios';
 import {DataLoadingState} from "./DataLoadingState";
 
@@ -27,6 +27,11 @@ class PokemonService {
     pokedexEntriesKeyBase: string = "Nascent-Pokemon-Pokedex-Entries"
 
     // OBSERVABLES
+    p2 = new BehaviorSubject<PokemonListDataState>({ state: DataLoadingState.Loading })
+    init() {
+
+    }
+
     pokemon = new Observable<PokemonListDataState>((subscriber) => {
         subscriber.next({ state: DataLoadingState.Loading, pokemon: [] })
         this.__fetchPokemon()
@@ -102,7 +107,7 @@ class PokemonService {
                                 types: pokemon.types.map((type: any) => type.type.name),
                                 abilities: pokemon.abilities.map((ability: any) => ability.ability.name),
                                 moves: pokemon.moves.map((move: any) => move.move.name),
-                                spriteUrl: pokemon.sprites.other.dream_world.front_default
+                                spriteUrl: pokemon.sprites.other['official-artwork'].front_default
                             }
                         )
                     })

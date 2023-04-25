@@ -17,7 +17,8 @@ export default class Authenticator {
         const user = await this.dataStore.read<User>(this._userKey)
         const token = await this.dataStore.read<string>(this._sessionTokenKey)
 
-        if (user !== undefined && token !== undefined) {
+        if (user !== undefined && user && token !== undefined && token) {
+            console.log("found authenticated session: ", user, token)
             return [user as User, token as string]
         }
 
@@ -25,9 +26,9 @@ export default class Authenticator {
     }
 
     logout() {
-        this.dataStore.clear()
         this.dataStore.delete(this._userKey)
         this.dataStore.delete(this._sessionTokenKey)
+        this.dataStore.clear()
     }
 
 }
