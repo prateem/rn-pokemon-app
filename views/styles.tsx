@@ -82,9 +82,11 @@ const components = StyleSheet.create({
     textInput: {
         height: 40,
         marginVertical: 6,
+        backgroundColor: 'white',
         borderWidth: 1,
         borderColor: 'grey',
-        padding: 8
+        padding: 8,
+        alignSelf: 'center'
     },
     badge: {
         alignSelf: "center",

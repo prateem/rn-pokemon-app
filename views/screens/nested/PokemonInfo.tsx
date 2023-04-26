@@ -1,117 +1,108 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {StackScreenProps} from '@react-navigation/stack'
 import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import pokemonService, {
-    PokedexEntriesDataState,
-    PokemonInfoDataState
-} from '../../../services/PokemonService'
+import {getPokemonDetails} from '../../../services/PokemonService'
 import {Image, ScrollView, Text, View} from 'react-native'
 import styles from '../../styles'
 import Loader from '../../components/core/Loader'
-import {DataLoadingState} from "../../../services/DataLoadingState";
+import {Evolution} from "../../../models/Pokemon";
+import pokemon from "../../../models/mocks/pokemon";
+
+/**
+ * @description
+ * Takes an Array<V>, and a grouping function,
+ * and returns a Map of the array grouped by the grouping function.
+ *
+ * @param list An array of type V.
+ * @param keyGetter A Function that takes the the Array type V as an input, and returns a value of type K.
+ *                  K is generally intended to be a property key of V.
+ *
+ * @returns Map of the array grouped by the grouping function.
+ */
+export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> {
+    const map = new Map<K, Array<V>>();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [item]);
+        } else {
+            collection.push(item);
+        }
+    });
+    return map;
+}
 
 export default function PokemonInfo({ navigation, route }: StackScreenProps<AppRoute, 'pokemon'>) {
     const pokemonNumber = route.params.number
 
-    const [pokemonInfo, setPokemonInfo]
-        = useState<PokemonInfoDataState>({ state: DataLoadingState.Loading })
-
-    const [pokedexEntries, setPokedexEntries]
-        = useState<PokedexEntriesDataState>({ state: DataLoadingState.Loading })
-
-    // Fetch Pokémon info
+    const pokemonInfo = getPokemonDetails(pokemonNumber)
     useEffect(() => {
         navigation.setOptions({
-            title: "#" + pokemonNumber
+            title: pokemonInfo.isSuccess ? pokemonInfo.data.pokemon.name : "#" + pokemonNumber
         })
-        pokemonService.getPokemonInfo(pokemonNumber)
-            .subscribe((data) => {
-                setPokemonInfo(data)
-                if (data.state == DataLoadingState.Loaded && data.info) {
-                    navigation.setOptions({
-                        title: data.info.name
-                    })
-                }
-            })
-    }, [pokemonNumber])
+    }, [pokemonInfo])
 
-    // Get Pokédex entries
-    useEffect(() => {
-        pokemonService.getPokedexEntries(pokemonNumber)
-            .subscribe((data) => {
-                setPokedexEntries(data)
-            })
-    }, [pokemonNumber])
-
-    if (pokemonInfo.state == DataLoadingState.Loading) {
+    if (pokemonInfo.isLoading || pokemonInfo.isIdle) {
         return (<Loader />)
-    } else if (pokemonInfo.state == DataLoadingState.Error) {
+    } else if (pokemonInfo.isError) {
         return (<Text>Pokemon not found</Text>)
     } else {
-        const pokemon = pokemonInfo.info
+        const data = pokemonInfo.data!
 
-        if (pokemon) {
-            return (
-                <View style={styles.components.page}>
-                    <ScrollView>
-                        <View style={styles.components.container}>
-                            <View style={{ ...styles.alignment.centered, flexDirection: 'row', flexWrap: 'wrap' }}>
-                                { /* Image and type badges */ }
-                                <View style={styles.alignment.centered}>
-                                    <Text style={styles.labels.normal}>#{pokemon.number}</Text>
+        return (
+            <View style={styles.components.page}>
+                <ScrollView>
+                    <View style={styles.components.container}>
+                        <View style={{ ...styles.alignment.centered, flexDirection: 'row', flexWrap: 'wrap' }}>
+                            { /* Image and type badges */ }
+                            <View style={styles.alignment.centered}>
+                                <Text style={styles.labels.normal}>#{data.pokemon.number}</Text>
 
-                                    <Image
-                                        resizeMode='contain'
-                                        style={{ width: 120, height: 120, margin: 8 }}
-                                        source={{ uri: pokemon.spriteUrl }} />
+                                <Image
+                                    resizeMode='contain'
+                                    style={{ width: 120, height: 120, margin: 8 }}
+                                    source={{ uri: data.pokemon.spriteUrl }} />
 
-                                    <Text style={styles.labels.heading}>{pokemon.name}</Text>
+                                <Text style={styles.labels.heading}>{data.pokemon.name}</Text>
 
-                                    <View style={{ flexDirection: 'row', marginVertical: 8 }}>
-                                        {pokemon.types.map((type, index) => {
-                                            return (
-                                                <Text key={index} style={{
-                                                    ...styles.labels.normal,
-                                                    ...styles.components.badge,
-                                                    backgroundColor: styles.getColorForType(type),
-                                                    color: 'white',
-                                                    fontWeight: 'bold',
-                                                }}>
-                                                    {type.toTitleCase()}
-                                                </Text>
-                                            )
-                                        })}
-                                    </View>
+                                <View style={{ flexDirection: 'row', marginVertical: 8 }}>
+                                    {data.pokemon.types.map((type, index) => {
+                                        return (
+                                            <Text key={index} style={{
+                                                ...styles.labels.normal,
+                                                ...styles.components.badge,
+                                                backgroundColor: styles.getColorForType(type),
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                            }}>
+                                                {type.toTitleCase()}
+                                            </Text>
+                                        )
+                                    })}
                                 </View>
-
-                                { /* Pokédex Entries */ }
-                                <View style={{ ...styles.components.card, margin: 24, flexShrink: 1 }}>
-                                    <View style={{ flex: 1}}>
-                                        <Text style={styles.labels.large}>Pokédex Entries</Text>
-
-                                        {
-                                            (pokedexEntries.state == DataLoadingState.Loaded && pokedexEntries.entries)
-                                                ? (
-                                                    pokedexEntries.entries.map((entry, index) => {
-                                                        return (
-                                                            <Text key={index} style={{...styles.labels.normal, fontStyle: 'italic', margin: 12}}>
-                                                                • {entry}
-                                                            </Text>)
-                                                    })
-                                                )
-                                                : (pokedexEntries.state == DataLoadingState.Loading ? (<Loader />) : (<Text>Could not load Pokédex entries</Text>))
-                                        }
-                                    </View>
-                                </View>
-
-                                { /* Image and type badges */ }
                             </View>
+
+                            { /* Pokédex Entries */ }
+                            <View style={{ ...styles.components.card, margin: 24, flexShrink: 1 }}>
+                                <View style={{ flex: 1}}>
+                                    <Text style={styles.labels.large}>Pokédex Entries</Text>
+                                    {
+                                        data.descriptions.map((entry, index) => {
+                                            return (
+                                                <Text key={index} style={{...styles.labels.normal, fontStyle: 'italic', margin: 12}}>
+                                                    • {entry}
+                                                </Text>)
+                                        })
+                                    }
+                                </View>
+                            </View>
+
+                            { /* Image and type badges */ }
                         </View>
-                    </ScrollView>
-                </View>
-            )
-        } else {
-            return (<Text>Pokemon not found</Text>)
-        }
+                    </View>
+                </ScrollView>
+            </View>
+        )
     }
 }

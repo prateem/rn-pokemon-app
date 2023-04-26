@@ -1,8 +1,8 @@
 import dataInstance, {DataStore} from "../core/DataStore";
-import Pokemon from "../models/Pokemon";
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Evolution, EvolutionChain, Pokemon, PokemonDetails} from "../models/Pokemon";
 import axios from 'axios';
 import {DataLoadingState} from "./DataLoadingState";
+import {useQuery} from "react-query";
 
 export interface PokemonListDataState {
     state: DataLoadingState
@@ -19,71 +19,17 @@ export interface PokedexEntriesDataState {
     entries?: Array<string>
 }
 
+const dataStore: DataStore = dataInstance.insecure
+const pokemonDataKey: string = "Nascent-Pokemon-Data"
+const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entries"
+const evolutionChainKeyBase: string = "Nascent-Pokemon-Evolution-Chain"
+
 class PokemonService {
 
-    dataStore: DataStore = dataInstance.insecure
-
-    pokemonDataKey: string = "Nascent-Pokemon-Data"
-    pokedexEntriesKeyBase: string = "Nascent-Pokemon-Pokedex-Entries"
-
-    // OBSERVABLES
-    p2 = new BehaviorSubject<PokemonListDataState>({ state: DataLoadingState.Loading })
-    init() {
-
-    }
-
-    pokemon = new Observable<PokemonListDataState>((subscriber) => {
-        subscriber.next({ state: DataLoadingState.Loading, pokemon: [] })
-        this.__fetchPokemon()
-            .then((pokemon) => subscriber.next({ state: DataLoadingState.Loaded, pokemon }))
-            .catch((_) => subscriber.next({ state: DataLoadingState.Error, pokemon: [] }))
-            .finally(() => subscriber.complete() )
-    })
-
-    getPokemonInfo(number: number): Observable<PokemonInfoDataState> {
-        return new Observable((subscriber) => {
-            subscriber.next({ state: DataLoadingState.Loading })
-
-            this.pokemon.subscribe({
-                next(data) {
-                    if (data.state == DataLoadingState.Error) {
-                        subscriber.next({ state: DataLoadingState.Error })
-                    } else if (data.state == DataLoadingState.Loaded) {
-                        let found = data.pokemon?.find((p) => p.number == number)
-                        if (found) {
-                            subscriber.next({
-                                state: DataLoadingState.Loaded,
-                                info: found
-                            })
-                        } else {
-                            subscriber.next({ state: DataLoadingState.Error })
-                        }
-                    }
-                },
-                error(err) {
-                    subscriber.next({ state: DataLoadingState.Error })
-                },
-                complete() {
-                    subscriber.complete()
-                }
-            })
-        })
-    }
-
-    getPokedexEntries(number: number): Observable<PokedexEntriesDataState> {
-        return new Observable<PokedexEntriesDataState>((subscriber) => {
-            subscriber.next({ state: DataLoadingState.Loading })
-
-            this.__fetchPokedexEntries(number)
-                .then((entries) => subscriber.next({ state: DataLoadingState.Loaded, entries }))
-                .catch((_) => subscriber.next({ state: DataLoadingState.Error }))
-                .finally(() => subscriber.complete() )
-        })
-    }
-
     // API CALLS
-    async __fetchPokemon(): Promise<Array<Pokemon>> {
-        let cached = await this.dataStore.read<Array<Pokemon>>(this.pokemonDataKey)
+    async fetchPokemon(): Promise<Array<Pokemon>> {
+        const dataStore = dataInstance.insecure
+        let cached = await dataStore.read<Array<Pokemon>>(pokemonDataKey)
         if (cached) {
             return cached
         }
@@ -113,53 +59,124 @@ class PokemonService {
                     })
                 })
                 .then((_) => {
-                    this.dataStore.write(this.pokemonDataKey, results)
+                    dataStore.write(pokemonDataKey, results)
                 })
         }
 
         return results
     }
 
-    async __fetchPokedexEntries(number: number): Promise<Array<string>> {
-        let key = this.pokedexEntriesKeyBase + `_${number}`
-        let cached = await this.dataStore.read<Array<string>>(key)
+    async fetchPokemonDetails(pokemon: Pokemon): Promise<PokemonDetails> {
+        let key = pokemonDetailsKeyBase + `_${pokemon.number}`
+        let cached = await dataStore.read<PokemonDetails>(key)
         if (cached) {
             return cached
         }
 
-        const results: Array<string> = [];
-        let data = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${number}`)
+        let evolutionChain: EvolutionChain = { id: -1, evolutions: [] }
+        const descriptions: Array<string> = [];
+        let speciesData = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.number}`)
 
-        if (data && data.data.flavor_text_entries) {
-            data.data.flavor_text_entries
-                .filter((entry: any) => entry.language.name == "en")
-                .forEach((entry: any) => {
-                    let text: string = entry.flavor_text
+        if (speciesData.data) {
+            // Descriptions
+            if (speciesData.data.flavor_text_entries) {
+                speciesData.data.flavor_text_entries
+                    .filter((entry: any) => entry.language.name == "en")
+                    .forEach((entry: any) => {
+                        let text: string = entry.flavor_text
 
-                    // Page breaks are treated just like newlines.
-                    // Soft hyphens followed by newlines vanish.
-                    // Letter-hyphen-newline becomes letter-hyphen, to preserve real hyphenation.
-                    // Any other newline becomes a space.
-                    // See: https://github.com/veekun/pokedex/issues/218#issuecomment-339841781
-                    let processed = text.replace(/\f/g, '\n')
-                        .replace(/\u00ad\n/g, '')
-                        .replace(/\u00ad/g, '')
-                        .replace(/ -\n/g, ' - ')
-                        .replace(/-\n/g, '-')
-                        .replace(/\n/g, ' ')
+                        // Page breaks are treated just like newlines.
+                        // Soft hyphens followed by newlines vanish.
+                        // Letter-hyphen-newline becomes letter-hyphen, to preserve real hyphenation.
+                        // Any other newline becomes a space.
+                        // See: https://github.com/veekun/pokedex/issues/218#issuecomment-339841781
+                        let processed = text.replace(/\f/g, '\n')
+                            .replace(/\u00ad\n/g, '')
+                            .replace(/\u00ad/g, '')
+                            .replace(/ -\n/g, ' - ')
+                            .replace(/-\n/g, '-')
+                            .replace(/\n/g, ' ')
 
-                    if (!results.includes(processed)) {
-                        results.push(processed)
-                    }
-                })
+                        if (!descriptions.includes(processed)) {
+                            descriptions.push(processed)
+                        }
+                    })
+            }
 
-            await this.dataStore.write(key, results)
+            // Evolution chain
+            if (speciesData.data.evolution_chain) {
+                evolutionChain = await this.getEvolutionChain(speciesData.data.evolution_chain.url)
+            }
         }
 
-        return results
+        const details = {pokemon, descriptions, evolutionChain}
+
+        await dataStore.write(key, details)
+
+        return details
+    }
+
+    async getEvolutionChain(chainUrl: string): Promise<EvolutionChain> {
+        const chainId = chainUrl.split('/').pop()!
+
+        let key = evolutionChainKeyBase + `_${chainId}`
+        let cached = await dataStore.read<EvolutionChain>(key)
+        if (cached) {
+            return cached
+        }
+
+        let evolutions: Evolution[] = []
+        let evolutionChainData = await axios.get(chainUrl)
+        if (evolutionChainData.data) {
+            evolutions = this.transformEvolutionChainData(evolutionChainData.data.chain)
+            console.log(evolutions)
+        }
+
+        return { id: parseInt(chainId), evolutions }
+    }
+
+    transformEvolutionChainData(chain: any): Evolution[] {
+        console.log(chain)
+        const fromNumber: number = chain.species.url
+            .replace(/^\/+|\/+$/g, '')
+            .split('/')
+            .pop()
+
+        let evolutions: Evolution[] = []
+
+        chain['evolves_to'].forEach((e: any) => {
+            const toNumber: number = e.species.url
+                .replace(/^\/+|\/+$/g, '')
+                .split('/')
+                .pop()
+
+            evolutions.push(
+                { from: fromNumber, to: toNumber },
+                ...this.transformEvolutionChainData(e)
+            )
+        })
+
+        return evolutions
     }
 
 }
 
 let service = Object.freeze(new PokemonService())
-export default service
+
+export function usePokemon() {
+    return useQuery<Pokemon[], Error>('pokemon', service.fetchPokemon)
+}
+
+export function getPokemonDetails(pokemonNumber: number) {
+    const pokemonData = usePokemon()
+    const pokemon = pokemonData.data
+        ?.find((p) => p.number == pokemonNumber)
+
+    return useQuery<PokemonDetails, Error>({
+        queryKey: ['pokemon-details', pokemonNumber],
+        queryFn: async () => {
+            return service.fetchPokemonDetails(pokemon!)
+        },
+        enabled: !!pokemon
+    })
+}

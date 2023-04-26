@@ -1,6 +1,6 @@
 import Gym from "../Gym"
 
-let johtoGyms: Array<Gym> = [
+const johtoGyms: Array<Gym> = [
     {number: 1, region: "Johto", location: "Violet City", badge: "Zephyr", leader: 100001, members: [1001, 1002]},
     {number: 2, region: "Johto", location: "Azalea Town", badge: "Hive",  leader: 100002, members: [2001, 2002, 2003, 2004]},
     {number: 3, region: "Johto", location: "Goldenrod City", badge: "Plain",  leader: 100003, members: [3001, 3002, 3003, 3004]},
@@ -10,7 +10,7 @@ let johtoGyms: Array<Gym> = [
     {number: 7, region: "Johto", location: "Mahogany Town", badge: "Glacier",  leader: 100007, members: [7001, 7002, 7003, 7004, 7005]},
     {number: 8, region: "Johto", location: "Blackthorn City", badge: "Rising",  leader: 100008, members: [8001, 8002, 8003, 8004, 8005]},
 ]
-let kantoGyms: Array<Gym> = [
+const kantoGyms: Array<Gym> = [
     {number: 9, region: "Kanto", location: "Pewter City", badge: "Boulder",  leader: 100009, members: [9001, 9002]},
     {number: 10, region: "Kanto", location: "Cerulean City", badge: "Cascade",  leader: 100010, members: [10001, 10002, 10003, 10004, 10005]},
     {number: 11, region: "Kanto", location: "Vermilion City", badge: "Thunder",  leader: 100011, members: [11001, 11002, 11003]},

@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, Text, Image, Pressable} from 'react-native'
+import {View, Text, Image, Pressable, Platform} from 'react-native'
 import styles from '../styles'
 import Gym from "../../models/Gym";
 
@@ -19,7 +19,10 @@ export default function GymCard({ gym, onPress }: GymCardProps) {
                 // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                 state.hovered && { backgroundColor: "lightgrey" }
             ]}>
-            <View style={{minWidth: 200}}>
+            <View style={{
+                minWidth: (Platform.OS == 'web' ? 200 : '100%'),
+                ...styles.alignment.centered
+            }}>
                 <Text style={{ ...styles.labels.small, alignSelf: 'flex-end', color: '#000' }}>#{gym.number}</Text>
 
                 {/*<Image*/}

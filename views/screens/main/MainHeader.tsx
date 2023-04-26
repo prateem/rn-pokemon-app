@@ -23,7 +23,7 @@ export default function MainHeader(props: HeaderProps) {
                     <Image
                         resizeMode='contain'
                         style={{ width: 32, height: 32, alignSelf: 'center', tintColor: "white" }}
-                        source={require('../../../assets/menu.png')} />
+                        source={require('../../../assets/icons/menu.png')} />
                 </Pressable>
 
                 <Text style={{ flex: 1, paddingStart: 8, paddingVertical: 8, fontSize: 20, color: "white" }}>{title}</Text>

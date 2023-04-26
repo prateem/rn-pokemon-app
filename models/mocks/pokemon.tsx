@@ -1,4 +1,4 @@
-import Pokemon from "../Pokemon";
+import {Pokemon} from "../Pokemon";
 
 let pokemon: Array<Pokemon> = [
     {number: 25, name: "Pikachu", types: ["Electric"], abilities: [], moves: [], spriteUrl: ""}

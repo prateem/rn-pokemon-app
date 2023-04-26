@@ -1,23 +1,16 @@
 import React from 'react'
-import {Pressable, ScrollView, Text, View} from 'react-native'
+import {ScrollView, Text, View} from 'react-native'
 import Loader from '../../components/core/Loader'
-import {bind} from "@react-rxjs/core";
-import {DataLoadingState} from "../../../services/DataLoadingState";
 import styles from "../../styles";
 import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import gymService from "../../../services/GymService";
+import {useGyms} from "../../../services/GymService";
 import Gym from "../../../models/Gym";
 import GymCard from "../../components/GymCard";
 
-const [getGyms, _] = bind(
-    gymService.gyms,
-    { state: DataLoadingState.Loading }
-)
-
 export default function Gyms() {
-    const data = getGyms()
+    const gyms = useGyms()
     const navigation = useNavigation<StackNavigationProp<AppRoute>>()
 
     function getGymCard(gym: Gym): JSX.Element {
@@ -29,10 +22,10 @@ export default function Gyms() {
         )
     }
 
-    if (data.state == DataLoadingState.Loading) {
+    if (gyms.isLoading || gyms.isIdle) {
         return (<Loader />)
-    } else if (data.state == DataLoadingState.Error) {
-        return (<Text>Error loading gyms</Text>)
+    } else if (gyms.isError) {
+        return (<Text>{`Error: ${gyms.error}`}</Text>)
     } else {
         return (
             <View style={styles.components.page}>
@@ -42,7 +35,7 @@ export default function Gyms() {
                             <Text style={styles.labels.large}>Johto</Text>
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                                {data.gyms?.johto.map(gym => getGymCard(gym) )}
+                                {gyms.data?.johto.map(gym => getGymCard(gym) )}
                             </View>
                         </View>
 
@@ -50,7 +43,7 @@ export default function Gyms() {
                             <Text style={styles.labels.large}>Kanto</Text>
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                                {data.gyms?.kanto.map(gym => getGymCard(gym) )}
+                                {gyms.data?.kanto.map(gym => getGymCard(gym) )}
                             </View>
                         </View>
                     </View>

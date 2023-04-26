@@ -1,7 +1,7 @@
-import React, {useRef, useState, useMemo, useEffect} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Image, Pressable, View} from 'react-native';
-import type { StackScreenProps } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import type {StackScreenProps} from '@react-navigation/stack'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import BottomSheet from '@gorhom/bottom-sheet';
 import {processDeepLink} from "../../core/DeepLink";
 
@@ -61,7 +61,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                                 <Image
                                     resizeMode='contain'
                                     style={{ width: 32, height: 32, alignSelf: 'center', tintColor: "white", marginHorizontal: 12 }}
-                                    source={require('../../assets/menu.png')} />
+                                    source={require('../../assets/icons/menu.png')} />
                             </Pressable>
                         )
                     }
@@ -73,7 +73,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Pokédex",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/pokeball.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/icons/pokeball.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="trainers"
@@ -82,7 +82,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Trainers",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/trainer-info.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/icons/trainer-info.png")} style={{width: 24, height: 24}} />
                         )}} />
                 <Tab.Screen
                     name="gyms"
@@ -91,7 +91,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Gyms",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/building.png")} style={{width: 24, height: 24}} />
+                            <Image resizeMode={'contain'} source={require("../../assets/icons/building.png")} style={{width: 24, height: 24}} />
                         )}} />
             </Tab.Navigator>
 

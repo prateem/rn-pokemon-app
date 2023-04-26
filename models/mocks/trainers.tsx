@@ -1,6 +1,6 @@
 import Trainer from "../Trainer"
 
-let common: Array<Trainer> = [
+const common: Array<Trainer> = [
     { id: 1, name: "Youngster Joey", specialty: null, pokemon: [19] },
 
     { id: 1001, name: "Bird Keeper Abe", specialty: null, pokemon: [21] },
@@ -65,7 +65,7 @@ let common: Array<Trainer> = [
     { id: 16004, name: "Double Team Elan & Ida", specialty: null, pokemon: [233, 184] },
 ]
 
-let gymLeaders: Array<Trainer> = [
+const gymLeaders: Array<Trainer> = [
     {id: 100001, name: "Falkner", specialty: "flying", pokemon: [16, 17]},
     {id: 100002, name: "Bugsy", specialty: "bug", pokemon: [11, 14, 123]},
     {id: 100003, name: "Whitney", specialty: "normal", pokemon: [35, 241]},
@@ -84,7 +84,7 @@ let gymLeaders: Array<Trainer> = [
     {id: 100016, name: "Blue", specialty: "mixed", pokemon: [18, 65, 112, 130, 103, 59]},
 ]
 
-let eliteFour: Array<Trainer> = [
+const eliteFour: Array<Trainer> = [
     {id: 400001, name: "Will", specialty: "psychic", pokemon: [178, 124, 80, 103, 178]},
     {id: 400002, name: "Koga", specialty: "poison", pokemon: [168, 49, 205, 89, 169]},
     {id: 400003, name: "Bruno", specialty: "fighting", pokemon: [237, 106, 107, 95, 68]},

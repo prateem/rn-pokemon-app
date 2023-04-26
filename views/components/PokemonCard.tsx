@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react'
-import {View, Text, Image, Pressable} from 'react-native'
-import Pokemon from '../../models/Pokemon'
+import {View, Text, Image, Pressable, Platform} from 'react-native'
+import {Pokemon} from '../../models/Pokemon'
 import styles from '../styles'
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -32,7 +32,7 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
         return (
             <View style={{
                 flexDirection: 'row',
-                minWidth: 200,
+                minWidth: (Platform.OS == 'web' ? 200 : '100%'),
                 ...styles.alignment.centered
             }}>
                 <Text style={{ ...styles.labels.normal, flex: 1, color: '#fff', fontWeight: 'bold' }}>{pokemon.name}</Text>
@@ -47,16 +47,31 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
     }
 
     function _getFullBody(): JSX.Element {
+        const imageSize = (Platform.OS == 'web' ? 120 : 100)
         return (
-            <View>
+            <View
+                style={{
+                    width: (imageSize + 16)
+                }}>
                 <Text style={{ ...styles.labels.small, alignSelf: 'flex-end' }}>#{pokemon.number}</Text>
 
                 <Image
                     resizeMode='contain'
-                    style={{ width: 120, height: 120, alignSelf: 'center', margin: 8, }}
-                    source={{ uri: pokemon.spriteUrl }} />
+                        style={{
+                            width: imageSize,
+                            height: imageSize,
+                            alignSelf: 'center',
+                            margin: 8
+                    }} source={{ uri: pokemon.spriteUrl }} />
 
-                <Text style={{ ...styles.labels.normal, alignSelf: 'flex-start', fontWeight: 'bold' }}>{pokemon.name}</Text>
+                <Text
+                    numberOfLines={1}
+                    ellipsizeMode={"tail"}
+                    style={{
+                        ...styles.labels.normal,
+                        alignSelf: 'flex-start',
+                        fontWeight: 'bold'
+                }}>{pokemon.name}</Text>
             </View>
         )
     }

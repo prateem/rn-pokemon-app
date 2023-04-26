@@ -4,6 +4,6 @@ declare namespace NodeJS {
     }
 }
 
-interface String {
+declare interface String {
     toTitleCase(): string
 }

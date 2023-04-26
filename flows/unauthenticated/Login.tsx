@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, TextInput, Pressable, Image } from 'react-native'
+import {Text, View, TextInput, Pressable, Image, Platform, KeyboardAvoidingView} from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
 import User from '../../models/User'
 import Authenticator from '../../core/Authenticator'
@@ -59,53 +59,62 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
             })
     }
 
+    const imageSize = 64
+
     return (
-        <View style={[styles.components.container, styles.alignment.centered]}>
-            <View>
-                <Text style={styles.labels.heading}>Login</Text>
-
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{flex: 1}}>
+            <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
                 <Image
-                    style={{ width: 180, height: 120, alignSelf: 'center', borderWidth: 1, margin: 8 }}
-                    source={{ uri: 'https://images.unsplash.com/photo-1569396116180-210c182bedb8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2669&q=80' }} />
+                    style={{ width: imageSize, height: imageSize, alignSelf: 'flex-start', margin: 8 }}
+                    source={require('../../assets/icons/trainer-info.png')} />
 
-                <View style={{ marginTop: 12, marginBottom: 6 }}>
-                    <Text style={styles.labels.normal}>Username</Text>
-                    <TextInput style={styles.components.textInput}
-                        onChangeText={(text: string) => setCredentials({
-                            ...credentials,
-                            username: {
-                                error: false,
-                                value: text
-                            }
-                        })}
-                    />
-                    {credentials.username.error && (
-                        <Text style={styles.labels.error}>Please enter your username.</Text>
-                    )}
+                <View style={[
+                    {marginEnd: imageSize},
+                    Platform.OS != 'web' ? { flex: 1 } : { minWidth: 300 }
+                ]}>
+                    <Text style={{...styles.labels.heading}}>Login</Text>
+
+                    <View style={{ marginTop: 12, marginBottom: 6 }}>
+                        <Text style={styles.labels.normal}>Username</Text>
+                        <TextInput style={{...styles.components.textInput, width: '100%'}}
+                                   onChangeText={(text: string) => setCredentials({
+                                       ...credentials,
+                                       username: {
+                                           error: false,
+                                           value: text
+                                       }
+                                   })}
+                        />
+                        {credentials.username.error && (
+                            <Text style={styles.labels.error}>Please enter your username.</Text>
+                        )}
+                    </View>
+
+
+                    <View style={{ marginTop: 6, marginBottom: 12 }}>
+                        <Text style={styles.labels.normal}>Password</Text>
+                        <TextInput style={{...styles.components.textInput, width: '100%'}}
+                                   onChangeText={(text: string) => setCredentials({
+                                       ...credentials,
+                                       password: {
+                                           error: false,
+                                           value: text
+                                       }
+                                   })}
+                                   secureTextEntry={true} />
+                        {credentials.password.error && (
+                            <Text style={styles.labels.error}>Please enter your password.</Text>
+                        )}
+                    </View>
+
+
+                    <Pressable onPress={(event) => { validate() }}>
+                        <Text style={styles.components.button}>Login</Text>
+                    </Pressable>
                 </View>
-
-
-                <View style={{ marginTop: 6, marginBottom: 12 }}>
-                    <Text style={styles.labels.normal}>Password</Text>
-                    <TextInput style={styles.components.textInput}
-                        onChangeText={(text: string) => setCredentials({
-                            ...credentials,
-                            password: {
-                                error: false,
-                                value: text
-                            }
-                        })}
-                        secureTextEntry={true} />
-                    {credentials.password.error && (
-                        <Text style={styles.labels.error}>Please enter your password.</Text>
-                    )}
-                </View>
-
-
-                <Pressable onPress={(event) => { validate() }}>
-                    <Text style={styles.components.button}>Login</Text>
-                </Pressable>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }

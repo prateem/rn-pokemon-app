@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { getStateFromPath as defaultStateFromPath, NavigationContainer } from '@react-navigation/native'
+import {View} from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import Authenticator from './Authenticator'
 import { useAppState } from './AppState'
@@ -83,7 +83,7 @@ export default function AppRouter() {
                                 return { routes: [{ name: 'onboarding' }] }
                             }
 
-                            return defaultStateFromPath(path, options)
+                            return { routes: [{name: 'app'}] }
                         }
                     }}>
                         <CoreStack.Navigator
