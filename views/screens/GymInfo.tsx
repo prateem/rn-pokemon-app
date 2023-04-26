@@ -1,12 +1,13 @@
 import React, {useEffect} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
-import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import Loader from '../../components/core/Loader';
+import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
+import Loader from '../components/core/Loader';
 import {View, Text, ScrollView} from "react-native";
-import styles from "../../styles";
-import {getGymInfo} from "../../../services/GymService";
-import TrainerCard from "../../components/TrainerCard";
-import Divider from "../../components/core/Divider";
+import {getGymInfo} from "../../services/GymService";
+import TrainerCard from "../components/pokemon/TrainerCard";
+import Divider from "../components/core/Divider";
+import tw from "twrnc";
+import Container from "../components/Container";
 
 export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute, 'gym'>) {
     const gymNumber = route.params.number
@@ -28,25 +29,24 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
         const members = gymInfo.data!.members
 
         return (
-            <View style={styles.components.page}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <View style={styles.components.container}>
-                        <View style={{ ...styles.alignment.centered, flexDirection: 'row', flexWrap: 'wrap' }}>
-
+                    <Container>
+                        <View style={tw`flex-row flex-wrap justify-center items-center`}>
                             { /* General Information */}
-                            <View style={styles.alignment.centered}>
-                                <Text style={styles.labels.normal}>{gym.badge} Badge</Text>
+                            <View style={tw`justify-center items-center`}>
+                                <Text style={tw`text-base`}>{gym.badge} Badge</Text>
 
                                 {/*<Image*/}
                                 {/*    resizeMode='contain'*/}
                                 {/*    style={{ width: 120, height: 120, margin: 8 }}*/}
                                 {/*    source={{ uri: pokemon.spriteUrl }} />*/}
 
-                                <Text style={styles.labels.heading}>{gym.location}</Text>
+                                <Text style={tw`text-5xl font-bold`}>{gym.location}</Text>
 
                                 <Divider marginVertical={8} />
 
-                                <Text style={{...styles.labels.small}}>Gym Leader</Text>
+                                <Text style={tw`text-sm`}>Gym Leader</Text>
                                 <TrainerCard
                                     trainer={leader}
                                     onPress={() => navigation.push('trainer', { id: leader.id })} />
@@ -54,8 +54,8 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
 
                             {/* Members */}
                             { members.length > 0 && (
-                                <View style={{ ...styles.alignment.centered, margin: 24, flexShrink: 1 }}>
-                                    <Text style={{...styles.labels.large, alignSelf: 'flex-start', fontWeight: 'bold'}}>Members</Text>
+                                <View style={tw`justify-center items-center m-8 flex-shrink`}>
+                                    <Text style={tw`text-lg self-start font-bold`}>Members</Text>
 
                                     {members.map((member) =>
                                         <TrainerCard
@@ -66,7 +66,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                                 </View>
                             )}
                         </View>
-                    </View>
+                    </Container>
                 </ScrollView>
             </View>
         )

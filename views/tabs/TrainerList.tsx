@@ -1,13 +1,14 @@
 import React from 'react'
 import {ScrollView, Text, View} from 'react-native'
-import Loader from '../../components/core/Loader'
-import styles from "../../styles";
+import Loader from '../components/core/Loader'
 import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
-import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import TrainerCard from "../../components/TrainerCard";
-import Trainer from "../../../models/Trainer";
-import {useTrainers} from "../../../services/TrainerService";
+import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
+import TrainerCard from "../components/pokemon/TrainerCard";
+import Trainer from "../../models/Trainer";
+import {useTrainers} from "../../services/TrainerService";
+import tw from "twrnc";
+import Container from "../components/Container";
 
 export default function Trainers() {
     const trainers = useTrainers()
@@ -28,33 +29,33 @@ export default function Trainers() {
         return (<Text>{`Error: ${trainers.error}`}</Text>)
     } else {
         return (
-            <View style={styles.components.page}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <View style={[styles.components.container]}>
-                        <View style={{margin: 24}}>
-                            <Text style={styles.labels.large}>Gym Leaders</Text>
+                    <Container>
+                        <View style={tw`m-8`}>
+                            <Text style={tw`text-lg`}>Gym Leaders</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.gymLeaders.map(trainer => getTrainerCard(trainer) )}
                             </View>
                         </View>
 
-                        <View style={{margin: 24}}>
-                            <Text style={styles.labels.large}>Elite Four</Text>
+                        <View style={tw`m-8`}>
+                            <Text style={tw`text-lg`}>Elite Four</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.eliteFour.map(trainer => getTrainerCard(trainer) )}
                             </View>
                         </View>
 
-                        <View style={{margin: 24}}>
-                            <Text style={styles.labels.large}>Trainers</Text>
+                        <View style={tw`m-8`}>
+                            <Text style={tw`text-lg`}>Trainers</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.common.map(trainer => getTrainerCard(trainer) )}
                             </View>
                         </View>
-                    </View>
+                    </Container>
                 </ScrollView>
             </View>
         )

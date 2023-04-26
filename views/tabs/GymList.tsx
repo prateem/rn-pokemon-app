@@ -1,13 +1,14 @@
 import React from 'react'
 import {ScrollView, Text, View} from 'react-native'
-import Loader from '../../components/core/Loader'
-import styles from "../../styles";
+import Loader from '../components/core/Loader'
 import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
-import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import {useGyms} from "../../../services/GymService";
-import Gym from "../../../models/Gym";
-import GymCard from "../../components/GymCard";
+import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
+import {useGyms} from "../../services/GymService";
+import Gym from "../../models/Gym";
+import GymCard from "../components/pokemon/GymCard";
+import tw from "twrnc";
+import Container from "../components/Container";
 
 export default function Gyms() {
     const gyms = useGyms()
@@ -28,25 +29,25 @@ export default function Gyms() {
         return (<Text>{`Error: ${gyms.error}`}</Text>)
     } else {
         return (
-            <View style={styles.components.page}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <View style={[styles.components.container]}>
-                        <View style={{margin: 24}}>
-                            <Text style={styles.labels.large}>Johto</Text>
+                    <Container>
+                        <View style={tw`m-8`}>
+                            <Text style={tw`text-lg`}>Johto</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={tw`flex-row flex-wrap`}>
                                 {gyms.data?.johto.map(gym => getGymCard(gym) )}
                             </View>
                         </View>
 
-                        <View style={{margin: 24}}>
-                            <Text style={styles.labels.large}>Kanto</Text>
+                        <View style={tw`m-8`}>
+                            <Text style={tw`text-lg`}>Kanto</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={tw`flex-row flex-wrap`}>
                                 {gyms.data?.kanto.map(gym => getGymCard(gym) )}
                             </View>
                         </View>
-                    </View>
+                    </Container>
                 </ScrollView>
             </View>
         )

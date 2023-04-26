@@ -1,11 +1,14 @@
 import React, {useEffect} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
-import {AppRoute} from "../../../flows/core/AuthenticatedFlow";
-import Loader from '../../components/core/Loader';
-import {getTrainerInfo} from "../../../services/TrainerService";
+import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
+import Loader from '../components/core/Loader';
+import {getTrainerInfo} from "../../services/TrainerService";
 import {View, Text, ScrollView} from "react-native";
-import styles from "../../styles";
-import PokemonCard from "../../components/PokemonCard";
+import PokemonCard from "../components/pokemon/PokemonCard";
+import tw from "twrnc";
+import Container from "../components/Container";
+import Badge from "../components/Badge";
+import {getColorForType} from "../../models/Pokemon";
 
 export default function TrainerInfo({ navigation, route }: StackScreenProps<AppRoute, 'trainer'>) {
     const trainerId = route.params.id
@@ -27,42 +30,37 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
         const pokemon = trainerInfo.data!.pokemon
 
         return (
-            <View style={styles.components.page}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <View style={styles.components.container}>
-                        <View style={{ ...styles.alignment.centered, flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <Container>
+                        <View style={tw`justify-center items-center flex-row flex-wrap`}>
 
                             { /* General Information */}
-                            <View style={styles.alignment.centered}>
-                                <Text style={styles.labels.normal}>Trainer ID: {trainer.id}</Text>
+                            <View style={tw`justify-center items-center`}>
+                                <Text style={tw`text-base`}>Trainer ID: {trainer.id}</Text>
 
                                 {/*<Image*/}
                                 {/*    resizeMode='contain'*/}
                                 {/*    style={{ width: 120, height: 120, margin: 8 }}*/}
                                 {/*    source={{ uri: pokemon.spriteUrl }} />*/}
 
-                                <Text style={styles.labels.heading}>{trainer.name}</Text>
+                                <Text style={tw`text-5xl font-bold`}>{trainer.name}</Text>
 
                                 {trainer.specialty && (
-                                    <View style={styles.alignment.centered}>
-                                        <Text style={styles.labels.normal}>Specialty</Text>
+                                    <View style={tw`justify-center items-center`}>
+                                        <Text style={tw`text-base`}>Specialty</Text>
 
-                                        <Text style={{
-                                            ...styles.labels.normal,
-                                            ...styles.components.badge,
-                                            backgroundColor: styles.getColorForType(trainer.specialty),
-                                            color: 'white',
-                                            fontWeight: 'bold',
-                                        }}>
-                                            {trainer.specialty.toTitleCase()}
-                                        </Text>
+                                        <Badge
+                                            text={trainer.specialty.toTitleCase()}
+                                            colorHex={getColorForType(trainer.specialty)}
+                                            minWidth={80} />
                                     </View>
                                 )}
                             </View>
 
                             {/* Pokemon */}
-                            <View style={{ ...styles.alignment.centered, margin: 24, flexShrink: 1 }}>
-                                <Text style={{...styles.labels.large, alignSelf: 'flex-start', fontWeight: 'bold'}}>Pokémon</Text>
+                            <View style={tw`m-8 justify-center items-center flex-shrink`}>
+                                <Text style={tw`text-lg self-start font-bold`}>Pokémon</Text>
 
                                 {pokemon?.map((p, index) =>
                                     <PokemonCard
@@ -73,7 +71,7 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
                                 )}
                             </View>
                         </View>
-                    </View>
+                    </Container>
                 </ScrollView>
             </View>
         )

@@ -129,14 +129,12 @@ class PokemonService {
         let evolutionChainData = await axios.get(chainUrl)
         if (evolutionChainData.data) {
             evolutions = this.transformEvolutionChainData(evolutionChainData.data.chain)
-            console.log(evolutions)
         }
 
         return { id: parseInt(chainId), evolutions }
     }
 
     transformEvolutionChainData(chain: any): Evolution[] {
-        console.log(chain)
         const fromNumber: number = chain.species.url
             .replace(/^\/+|\/+$/g, '')
             .split('/')
@@ -150,8 +148,11 @@ class PokemonService {
                 .split('/')
                 .pop()
 
+            if (fromNumber <= 251 && toNumber <= 251) {
+                evolutions.push({ from: fromNumber, to: toNumber })
+            }
+
             evolutions.push(
-                { from: fromNumber, to: toNumber },
                 ...this.transformEvolutionChainData(e)
             )
         })

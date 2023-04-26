@@ -1,10 +1,10 @@
 import {createStackNavigator} from "@react-navigation/stack";
-import styles from "../../views/styles";
 import React from "react";
-import Home from "../authenticated/Home";
-import PokemonInfo from "../../views/screens/nested/PokemonInfo";
-import TrainerInfo from "../../views/screens/nested/TrainerInfo";
-import GymInfo from "../../views/screens/nested/GymInfo";
+import Home from "./Home";
+import PokemonInfo from "../../views/screens/PokemonInfo";
+import TrainerInfo from "../../views/screens/TrainerInfo";
+import GymInfo from "../../views/screens/GymInfo";
+import tw from "twrnc";
 
 export type AppRoute = {
     home: undefined
@@ -13,13 +13,12 @@ export type AppRoute = {
     gym: { number: number }
 }
 
-
 const AuthenticatedStack = createStackNavigator<AppRoute>();
 export default function AuthenticatedFlow() {
     return (
         <AuthenticatedStack.Navigator
             screenOptions={{
-                headerStyle: styles.components.navigationBar,
+                headerStyle: tw`bg-red-600`,
                 headerTintColor: "white"
             }}>
             <AuthenticatedStack.Group>

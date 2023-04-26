@@ -5,15 +5,15 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import BottomSheet from '@gorhom/bottom-sheet';
 import {processDeepLink} from "../../core/DeepLink";
 
-import {AppRoute} from "../core/AuthenticatedFlow";
+import {AppRoute} from "./AuthenticatedFlow";
 import AppMenu from '../../views/components/core/AppMenu';
-import Pokedex from '../../views/screens/tabs/Pokedex';
-import Trainers from '../../views/screens/tabs/TrainerList';
-import Gyms from '../../views/screens/tabs/GymList';
+import Pokedex from '../../views/tabs/Pokedex';
+import Trainers from '../../views/tabs/TrainerList';
+import Gyms from '../../views/tabs/GymList';
 import MenuBackdrop from '../../views/components/core/MenuBackdrop';
-import styles from '../../views/styles';
 import {useAppState} from "../../core/AppState";
 import * as Linking from "expo-linking";
+import tw from "twrnc";
 
 export type HomeTab = {
     pokedex: undefined
@@ -52,7 +52,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
         }}>
             <Tab.Navigator
                 screenOptions={({route}) => ({
-                    headerStyle: styles.components.navigationBar,
+                    headerStyle: tw`bg-red-600`,
                     headerTintColor: "white",
                     // @ts-ignore
                     headerLeft: (route.name == 'home') ? undefined : () => {
@@ -60,7 +60,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                             <Pressable onPress={ toggleMenu }>
                                 <Image
                                     resizeMode='contain'
-                                    style={{ width: 32, height: 32, alignSelf: 'center', tintColor: "white", marginHorizontal: 12 }}
+                                    style={tw`w-7 h-7 self-center tint-white mx-3`}
                                     source={require('../../assets/icons/menu.png')} />
                             </Pressable>
                         )
@@ -73,7 +73,10 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Pokédex",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/icons/pokeball.png")} style={{width: 24, height: 24}} />
+                            <Image
+                                resizeMode={'contain'}
+                                source={require("../../assets/icons/pokeball.png")}
+                                style={tw`w-6 h-6`} />
                         )}} />
                 <Tab.Screen
                     name="trainers"
@@ -82,7 +85,10 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Trainers",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/icons/trainer-info.png")} style={{width: 24, height: 24}} />
+                            <Image
+                                resizeMode={'contain'}
+                                source={require("../../assets/icons/trainer-info.png")}
+                                style={tw`w-6 h-6`} />
                         )}} />
                 <Tab.Screen
                     name="gyms"
@@ -91,7 +97,10 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         title: "Gyms",
                         tabBarActiveBackgroundColor: '#cccccc66',
                         tabBarIcon: (tabInfo) => (
-                            <Image resizeMode={'contain'} source={require("../../assets/icons/building.png")} style={{width: 24, height: 24}} />
+                            <Image
+                                resizeMode={'contain'}
+                                source={require("../../assets/icons/building.png")}
+                                style={tw`w-6 h-6`} />
                         )}} />
             </Tab.Navigator>
 
@@ -99,19 +108,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}
-                    style={{
-                        borderWidth: 0.25,
-                        borderColor: "#00000033",
-                        borderRadius: 12,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: -1,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        elevation: 4,
-                    }}
+                    style={tw`shadow-md`}
                     enablePanDownToClose={true}
                     backdropComponent={MenuBackdrop}
                     snapPoints={snapPoints}
@@ -122,10 +119,9 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         }
                      }}>
 
-                    <View style={{ ...styles.components.container, ...styles.alignment.centered, flex: 1, justifyContent: 'flex-start' }}>
+                    <View style={tw`px-4 py-2 justify-center items-center`}>
                         <AppMenu navigation={navigation} />
                     </View>
-
                 </BottomSheet>
             )}
         </View>

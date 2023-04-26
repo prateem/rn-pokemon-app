@@ -1,21 +1,22 @@
 import React, {useMemo} from 'react'
-import {View, Text, Image, Pressable, Platform} from 'react-native'
-import {Pokemon} from '../../models/Pokemon'
-import styles from '../styles'
+import {View, Text, Image, Pressable, Platform, ViewStyle} from 'react-native'
+import {getColorForType, Pokemon} from '../../../models/Pokemon'
 import { LinearGradient } from 'expo-linear-gradient';
+import tw from "twrnc";
 
 type PokemonCardProps = {
     pokemon: Pokemon,
     useCompactLayout: boolean,
-    onPress: () => void
+    onPress: () => void,
+    style?: ViewStyle
 }
 
-export default function PokemonCard({ pokemon, useCompactLayout, onPress }: PokemonCardProps) {
+export default function PokemonCard({ pokemon, useCompactLayout, onPress, style }: PokemonCardProps) {
 
     const backgroundColors = useMemo(() => {
         const mapped = pokemon.types
             .flatMap((type) => {
-                const color = styles.getColorForType(type)
+                const color = getColorForType(type)
                 if (!color) { return [] }
                 return color
             })
@@ -30,16 +31,16 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
 
     function _getCompactBody(): JSX.Element {
         return (
-            <View style={{
-                flexDirection: 'row',
-                minWidth: (Platform.OS == 'web' ? 200 : '100%'),
-                ...styles.alignment.centered
-            }}>
-                <Text style={{ ...styles.labels.normal, flex: 1, color: '#fff', fontWeight: 'bold' }}>{pokemon.name}</Text>
+            <View style={
+                tw.style(
+                    `flex-row justify-center items-center`,
+                    Platform.OS == 'web' ? `w-52` : `min-w-full`
+                )}>
+                <Text style={tw`text-base text-white font-bold flex-1`}>{pokemon.name}</Text>
 
                 <Image
                     resizeMode='contain'
-                    style={{ width: 40, height: 40, alignSelf: 'center', margin: 4 }}
+                    style={tw`w-10 h-10 m-1 self-center`}
                     source={{ uri: pokemon.spriteUrl }} />
 
             </View>
@@ -53,25 +54,22 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
                 style={{
                     width: (imageSize + 16)
                 }}>
-                <Text style={{ ...styles.labels.small, alignSelf: 'flex-end' }}>#{pokemon.number}</Text>
+                <Text style={tw`text-base self-end`}>#{pokemon.number}</Text>
 
                 <Image
                     resizeMode='contain'
-                        style={{
+                    style={tw.style(
+                        `self-center m-2`,
+                        {
                             width: imageSize,
-                            height: imageSize,
-                            alignSelf: 'center',
-                            margin: 8
-                    }} source={{ uri: pokemon.spriteUrl }} />
+                            height: imageSize
+                        })}
+                    source={{ uri: pokemon.spriteUrl }} />
 
                 <Text
                     numberOfLines={1}
                     ellipsizeMode={"tail"}
-                    style={{
-                        ...styles.labels.normal,
-                        alignSelf: 'flex-start',
-                        fontWeight: 'bold'
-                }}>{pokemon.name}</Text>
+                    style={tw`text-base self-start font-bold`}>{pokemon.name}</Text>
             </View>
         )
     }
@@ -79,15 +77,12 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress }: Poke
     return (
         <Pressable
             onPress={(_) => onPress()}
-            style={[styles.components.card, { margin: 8, padding: 0 }]}>
-
+            style={tw.style(`rounded-3 m-2 shadow-md border border-gray-200`, style)}>
             {(state) => (
                 <LinearGradient
                     // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                     colors={state.hovered ? ['#cccccc', '#cccccc'] : backgroundColors}
-                    style={[
-                        { padding: 12, borderRadius: 12 }
-                    ]}
+                    style={tw`p-3 rounded-3`}
                     start={{x: 0, y: 1}}
                     end={{x: 1, y: 0}}
                 >

@@ -6,8 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Authenticator from './Authenticator'
 import { useAppState } from './AppState'
 import Loader from '../views/components/core/Loader'
-import UnauthenticatedFlow from "../flows/core/UnauthenticatedFlow";
-import AuthenticatedFlow from "../flows/core/AuthenticatedFlow";
+import UnauthenticatedFlow from "../flows/unauthenticated/UnauthenticatedFlow";
+import AuthenticatedFlow from "../flows/authenticated/AuthenticatedFlow";
 
 const authenticator = new Authenticator();
 

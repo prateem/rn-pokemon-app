@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import {Text, View, TextInput, Pressable, Image, Platform, KeyboardAvoidingView} from 'react-native'
+import {Text, View, Image, Platform, KeyboardAvoidingView} from 'react-native'
 import type { StackScreenProps } from '@react-navigation/stack'
 import User from '../../models/User'
 import Authenticator from '../../core/Authenticator'
 import { useAppState } from '../../core/AppState'
-import styles from '../../views/styles'
-import {UnauthenticatedRoute} from "../core/UnauthenticatedFlow";
+import {UnauthenticatedRoute} from "./UnauthenticatedFlow";
 import {StackActions} from "@react-navigation/native";
+import tw from "twrnc";
+import AppButton from "../../views/components/AppButton";
+import AppInputField from "../../views/components/AppInputField";
 
 interface Credentials {
     username: {
@@ -74,45 +76,47 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
                     {marginEnd: imageSize},
                     Platform.OS != 'web' ? { flex: 1 } : { minWidth: 300 }
                 ]}>
-                    <Text style={{...styles.labels.heading}}>Login</Text>
+                    <Text style={tw`text-5xl font-bold`}>Login</Text>
 
                     <View style={{ marginTop: 12, marginBottom: 6 }}>
-                        <Text style={styles.labels.normal}>Username</Text>
-                        <TextInput style={{...styles.components.textInput, width: '100%'}}
-                                   onChangeText={(text: string) => setCredentials({
-                                       ...credentials,
-                                       username: {
-                                           error: false,
-                                           value: text
-                                       }
-                                   })}
-                        />
+                        <AppInputField
+                            label={"Username"}
+                            style={tw`min-w-full`}
+                            onTextChange={(text: string) => setCredentials({
+                                ...credentials,
+                                username: {
+                                    error: false,
+                                    value: text
+                                }
+                            })} />
+
                         {credentials.username.error && (
-                            <Text style={styles.labels.error}>Please enter your username.</Text>
+                            <Text style={tw`text-sm text-red`}>Please enter your username.</Text>
                         )}
                     </View>
 
 
                     <View style={{ marginTop: 6, marginBottom: 12 }}>
-                        <Text style={styles.labels.normal}>Password</Text>
-                        <TextInput style={{...styles.components.textInput, width: '100%'}}
-                                   onChangeText={(text: string) => setCredentials({
-                                       ...credentials,
-                                       password: {
-                                           error: false,
-                                           value: text
-                                       }
-                                   })}
-                                   secureTextEntry={true} />
+                        <AppInputField
+                            label={"Password"}
+                            style={tw`min-w-full`}
+                            isSecure={true}
+                            onTextChange={(text: string) =>
+                                setCredentials({
+                                    ...credentials,
+                                    password: {
+                                        error: false,
+                                        value: text
+                                    }
+                                })} />
+
                         {credentials.password.error && (
-                            <Text style={styles.labels.error}>Please enter your password.</Text>
+                            <Text style={tw`text-sm text-red`}>Please enter your password.</Text>
                         )}
                     </View>
 
 
-                    <Pressable onPress={(event) => { validate() }}>
-                        <Text style={styles.components.button}>Login</Text>
-                    </Pressable>
+                    <AppButton text={"Login"} onPress={() => validate()} />
                 </View>
             </View>
         </KeyboardAvoidingView>

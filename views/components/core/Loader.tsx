@@ -1,6 +1,7 @@
 import React from "react";
-import {View, ActivityIndicator, Text} from "react-native";
-import styles from "../../styles";
+import {ActivityIndicator, Text} from "react-native";
+import tw from "twrnc";
+import Container from "../Container";
 
 export type LoaderProps = {
     message?: string
@@ -9,12 +10,12 @@ export type LoaderProps = {
 export default function Loader({ message } : LoaderProps) {
 
     return (
-        <View style={[styles.components.container, styles.alignment.centered]}>
+        <Container centered={true}>
             <ActivityIndicator size="large" />
             {message && (
-                <Text style={{...styles.labels.normal, padding: 12}}>{message}</Text>
+                <Text style={tw`text-base p-3`}>{message}</Text>
             )}
-        </View>
+        </Container>
     )
 
 }
