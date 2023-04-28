@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react'
-import {View, Text, Image, Platform, ViewStyle} from 'react-native'
+import {View, Text, Image, Platform, ViewStyle, Pressable} from 'react-native'
 import {getColorForType, Pokemon} from '../../../models/Pokemon'
 import { LinearGradient } from 'expo-linear-gradient';
 import tw from "twrnc";
@@ -26,13 +26,10 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress, style 
     }, [pokemon])
 
     return (
-        <Card
-            onPress={onPress}
-            style={tw.style(`m-2 rounded-3 p-0`, style)}
-            pressableStatefulStyle={(state) => tw.style(state.pressed && { opacity: 0.5 })}
-            pressableStatefulChildren={(state) => (
-                <>{
-                    backgroundColors.length == 1
+        <Pressable onPress={onPress}>
+            {(state) => (
+                <Card style={tw.style(`m-2 rounded-3 p-0`, state.pressed && { opacity: 0.5 }, style)}>
+                    {backgroundColors.length == 1
                         ? (
                             // Default gradient
                             <View style={tw.style(`rounded-3`, { backgroundColor: backgroundColors[0] })}>
@@ -58,9 +55,10 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress, style 
                                     { useCompactLayout ? _getCompactBody(pokemon) : _getFullBody(pokemon) }
                                 </View>
                             </LinearGradient>
-                        )
-                }</>
-            )} />
+                        )}
+                </Card>
+            )}
+        </Pressable>
     )
 }
 
