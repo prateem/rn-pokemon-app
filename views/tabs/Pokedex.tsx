@@ -2,12 +2,9 @@ import React, {useState} from 'react'
 import {
     Text,
     View,
-    ScrollView,
-    TextInput,
     Image,
     Platform,
     KeyboardAvoidingView,
-    Pressable,
     FlatList
 } from 'react-native'
 import {usePokemon} from '../../services/PokemonService'
@@ -18,7 +15,6 @@ import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import Loader from "../components/core/Loader";
 import { useHeaderHeight } from '@react-navigation/elements'
 import tw from "twrnc";
-import Container from "../components/Container";
 import AppInputField from "../components/AppInputField";
 
 export default function Pokedex() {

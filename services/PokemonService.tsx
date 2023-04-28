@@ -198,7 +198,7 @@ export function usePokemon() {
 export function getPokemonDetails(pokemonNumber: number) {
     const pokemonData = usePokemon()
     const pokemon = pokemonData.data
-        ?.find((p) => p.number == pokemonNumber)
+        ?.find((p: Pokemon) => p.number == pokemonNumber)
 
     return useQuery<PokemonDetails, Error>({
         queryKey: ['pokemon-details', pokemonNumber],
