@@ -85,6 +85,7 @@ function _getCompactBody(pokemon: Pokemon): JSX.Element {
     )
 }
 
+// 40 + (120|100) + 16 + 48 + 2
 function _getFullBody(pokemon: Pokemon): JSX.Element {
     const imageSize = (Platform.OS == 'web' ? 120 : 100)
     return (

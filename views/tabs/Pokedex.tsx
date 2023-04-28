@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import {
     Text,
     View,
     Image,
     Platform,
     KeyboardAvoidingView,
-    FlatList
+    InteractionManager, FlatList
 } from 'react-native'
 import {usePokemon} from '../../services/PokemonService'
 import PokemonCard from '../components/pokemon/PokemonCard'
@@ -17,11 +17,23 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import tw from "twrnc";
 import AppInputField from "../components/AppInputField";
 
+// Scroll position 'memory'
+let pokemonToScrollTo: number | null = 0
+
 export default function Pokedex() {
     const pokemon = usePokemon()
 
     const [searched, setSearched] = useState<string>("")
-    const [columns, setColumns] = useState(1)
+    const [grid, setGrid] = useState({ rows: 1, columns: 1 })
+
+    const pokemonCardSize = useMemo(() => {
+        // margin(card) + borders(card) + padding(card) + margin(image) + width(image) + extra space for padding
+        const width = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 60
+
+        // margin(card) + borders(card) + padding(card) + margin(image) + height(image) + lineHeight(text)
+        const height = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 48
+        return { width, height }
+    }, [Platform.OS])
 
     const navigation = useNavigation<StackNavigationProp<AppRoute>>()
     const headerHeight = useHeaderHeight()
@@ -59,25 +71,45 @@ export default function Pokedex() {
                     // because supporting flex-wrap: 'wrap' on FlatList is too much work?
                     // see: https://github.com/facebook/react-native/issues/13939#issuecomment-355075463
                     onLayout={(event) => {
-                        const { width: availableWidth } = event.nativeEvent.layout
+                        const { width: availableWidth, height: availableHeight } = event.nativeEvent.layout
 
-                        // imageSize (same as PokemonCard full body) + some generous spacing potential
-                        const itemWidth = (Platform.OS == 'web' ? 120 : 100) + 60
-
-                        setColumns(Math.floor(availableWidth / itemWidth))
+                        setGrid({
+                            rows: Math.floor(availableHeight / pokemonCardSize.height),
+                            columns: Math.floor(availableWidth / pokemonCardSize.width)
+                        })
                     }}
-                    numColumns={columns}
-                    key={columns}
+                    numColumns={grid.columns}
+                    key={grid.columns}
+                    getItemLayout={(data, rowIndex) => {
+                        return {
+                            length: pokemonCardSize.height,
+                            offset: pokemonCardSize.height * rowIndex,
+                            index: rowIndex
+                        }
+                    }}
+                    initialScrollIndex={((): number => {
+                        if (pokemonToScrollTo && pokemonToScrollTo > 0 && pokemonToScrollTo <= 251 && grid.columns > 0) {
+                            const containingRow = Math.floor(pokemonToScrollTo / grid.columns)
+                            pokemonToScrollTo = null
+                            return containingRow - Math.floor(grid.rows / 2)
+                        }
+
+                        return 0
+                    })()}
                     contentContainerStyle={tw`justify-center items-center`}
                     data={filteredPokemon}
                     keyExtractor={ p => p.number.toString() }
                     renderItem={({ item: pokemon }) => {
-                    return <PokemonCard
-                        key={pokemon.number}
-                        pokemon={pokemon}
-                        useCompactLayout={false}
-                        onPress={() => navigation.push('pokemon', {number: pokemon.number})}
-                    />
+                        return <PokemonCard
+                            key={pokemon.number}
+                            pokemon={pokemon}
+                            useCompactLayout={false}
+                            onPress={() => {
+                                navigation.push('pokemon', {number: pokemon.number})
+                                InteractionManager.runAfterInteractions(() => {
+                                    pokemonToScrollTo = pokemon.number
+                                })
+                            }}/>
                 }}/>
 
                 <View style={tw`px-3 py-2 flex-row bg-white border-t border-gray-200`}>
