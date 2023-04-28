@@ -22,7 +22,7 @@ export default function Collapsible({ title, children, style }: CollapsibleProps
                     <Image
                         style={tw.style(
                             'w-6 h-6 mx-2',
-                            showContent && {transform: 'rotate(180deg)'}
+                            showContent && { transform: [{rotate: '180deg'}]}
                         )}
                         source={require('../../assets/icons/chevron-down.png')} />
                 </View>

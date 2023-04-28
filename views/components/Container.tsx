@@ -11,7 +11,7 @@ type ContainerProps = {
 export default function Container(props: ContainerProps) {
     return (
         <View style={tw.style(
-            `flex-1 bg-white p-3`,
+            `flex-1 bg-white p-3 `,
             (props.centered || false) && `justify-center items-center`,
             props.style
         )}>

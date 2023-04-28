@@ -6,23 +6,24 @@ import AppRouter from './core/AppRouter'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import {QueryClient, QueryClientProvider} from "react-query";
 import {ViewStyle} from "react-native";
+import { useDeviceContext } from 'twrnc';
 import tw from "twrnc";
 
 const queryClient = new QueryClient()
 
 export default function App() {
-    return (
-        // <SafeAreaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <AppStateProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <AppRouter />
+    useDeviceContext(tw);
 
-                        <StatusBar style="auto" />
-                    </QueryClientProvider>
-                </AppStateProvider>
-            </GestureHandlerRootView>
-        // </SafeAreaProvider>
+    return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <AppStateProvider>
+                <QueryClientProvider client={queryClient}>
+                    <AppRouter />
+
+                    <StatusBar style="auto" />
+                </QueryClientProvider>
+            </AppStateProvider>
+        </GestureHandlerRootView>
     )
 }
 

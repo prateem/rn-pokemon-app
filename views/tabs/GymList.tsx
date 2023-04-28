@@ -33,7 +33,7 @@ export default function Gyms() {
                 <ScrollView>
                     <Container>
                         <View style={tw`m-8`}>
-                            <Text style={tw`text-lg`}>Johto</Text>
+                            <Text style={tw`text-xl font-bold`}>Johto</Text>
 
                             <View style={tw`flex-row flex-wrap`}>
                                 {gyms.data?.johto.map(gym => getGymCard(gym) )}
@@ -41,7 +41,7 @@ export default function Gyms() {
                         </View>
 
                         <View style={tw`m-8`}>
-                            <Text style={tw`text-lg`}>Kanto</Text>
+                            <Text style={tw`text-xl font-bold`}>Kanto</Text>
 
                             <View style={tw`flex-row flex-wrap`}>
                                 {gyms.data?.kanto.map(gym => getGymCard(gym) )}

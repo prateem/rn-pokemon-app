@@ -3,14 +3,26 @@ export interface Pokemon {
     name: string
     types: Array<string>
     abilities: Array<string>
-    moves: Array<string>
+    moves: Array<PokemonMove>
     spriteUrl: string
+}
+
+export interface PokemonMove {
+    name: string
+    learnedAtLevel: number
+    url: string
+}
+
+export interface PokemonMoveDetailed {
+    move: PokemonMove
+    data: { type: string }
 }
 
 export interface PokemonDetails {
     pokemon: Pokemon,
     descriptions: Array<string>
-    evolutionChain: EvolutionChain
+    evolutionChain: EvolutionChain,
+    moves: Array<PokemonMoveDetailed>
 }
 
 export interface EvolutionChain {

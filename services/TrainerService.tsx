@@ -1,4 +1,3 @@
-import {DataLoadingState} from "./DataLoadingState"
 import Trainer from "../models/Trainer"
 import dataInstance, {DataStore} from "../core/DataStore";
 import trainerMocks from "../models/mocks/trainers"

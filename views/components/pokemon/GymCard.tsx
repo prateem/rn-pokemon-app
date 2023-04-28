@@ -14,12 +14,13 @@ export default function GymCard({ gym, onPress }: GymCardProps) {
             onPress={(_) => onPress()}
             style={(state) => [
                 tw.style(
-                    `m-2 rounded-3 p-3 shadow-md border border-gray-200`,
+                    `m-2 rounded-3 p-3 bg-white shadow-md border border-gray-200`,
+                    state.pressed && { opacity: 0.5 },
                     // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                     state.hovered && `bg-gray-100`
                 )
             ]}>
-            <View style={tw.style(`justify-center items-center`, Platform.OS == 'web' ? 'w-52' : `min-w-full`)}>
+            <View style={tw.style(`justify-center items-center text-center`, Platform.OS == 'web' ? 'w-52' : `min-w-full`)}>
                 <Text style={tw`text-base self-end text-black`}>#{gym.number}</Text>
 
                 <Text style={tw`text-base self-start font-bold text-black`}>{gym.location}</Text>

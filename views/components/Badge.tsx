@@ -1,5 +1,5 @@
 import tw from "twrnc";
-import {Text} from "react-native";
+import {Text, View} from "react-native";
 import React from "react";
 import {PropsWithStyle} from "../../App";
 
@@ -13,13 +13,13 @@ export default function Badge(props: BadgeProps) {
     const minWidth = props.minWidth ? `min-w-${Math.floor(props.minWidth / 4)}` : undefined
 
     return (
-        <Text style={tw.style(
-            `text-base text-white font-bold justify-center items-center text-center m-1 p-1 rounded-3`,
+        <View style={tw.style(
+            `justify-center items-center text-center m-1 p-1 rounded-3 self-center`,
             props.colorHex && { backgroundColor: props.colorHex },
             minWidth,
             props.style
         )}>
-            {props.text}
-        </Text>
+            <Text style={tw`text-base text-white font-bold`}>{props.text}</Text>
+        </View>
     )
 }

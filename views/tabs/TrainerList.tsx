@@ -33,7 +33,7 @@ export default function Trainers() {
                 <ScrollView>
                     <Container>
                         <View style={tw`m-8`}>
-                            <Text style={tw`text-lg`}>Gym Leaders</Text>
+                            <Text style={tw`text-xl font-bold`}>Gym Leaders</Text>
 
                             <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.gymLeaders.map(trainer => getTrainerCard(trainer) )}
@@ -41,7 +41,7 @@ export default function Trainers() {
                         </View>
 
                         <View style={tw`m-8`}>
-                            <Text style={tw`text-lg`}>Elite Four</Text>
+                            <Text style={tw`text-xl font-bold`}>Elite Four</Text>
 
                             <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.eliteFour.map(trainer => getTrainerCard(trainer) )}
@@ -49,7 +49,7 @@ export default function Trainers() {
                         </View>
 
                         <View style={tw`m-8`}>
-                            <Text style={tw`text-lg`}>Trainers</Text>
+                            <Text style={tw`text-xl font-bold`}>Trainers</Text>
 
                             <View style={tw`flex-row flex-wrap`}>
                                 {trainers.data?.common.map(trainer => getTrainerCard(trainer) )}

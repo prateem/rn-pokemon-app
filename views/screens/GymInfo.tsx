@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import Loader from '../components/core/Loader';
@@ -11,8 +11,9 @@ import Container from "../components/Container";
 
 export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute, 'gym'>) {
     const gymNumber = route.params.number
-    const gymInfo = getGymInfo(gymNumber)
+    const [availableWidth, setAvailableWidth] = useState(0)
 
+    const gymInfo = getGymInfo(gymNumber)
     useEffect(() => {
         navigation.setOptions({
             title: gymInfo.isSuccess ? `${gymInfo.data.gym.location} - ${gymInfo.data.gym.badge} Badge` : "#" + gymNumber
@@ -29,20 +30,24 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
         const members = gymInfo.data!.members
 
         return (
-            <View style={tw`flex-1 bg-white`}>
+            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
+                const { width } = event.nativeEvent.layout
+                setAvailableWidth(width)
+            }}>
                 <ScrollView>
-                    <Container>
-                        <View style={tw`flex-row flex-wrap justify-center items-center`}>
+                    <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
+                        <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
                             { /* General Information */}
-                            <View style={tw`justify-center items-center`}>
-                                <Text style={tw`text-base`}>{gym.badge} Badge</Text>
+                            <View style={tw`m-4 justify-center items-start web:items-center android:w-full ios:w-full android:px-2 ios:px-2`}>
+                                <Text style={tw`text-3xl font-bold text-center`}>{gym.location}</Text>
+
+                                <Text style={tw`text-base my-2`}>{gym.badge} Badge</Text>
 
                                 {/*<Image*/}
                                 {/*    resizeMode='contain'*/}
                                 {/*    style={{ width: 120, height: 120, margin: 8 }}*/}
                                 {/*    source={{ uri: pokemon.spriteUrl }} />*/}
 
-                                <Text style={tw`text-5xl font-bold`}>{gym.location}</Text>
 
                                 <Divider marginVertical={8} />
 
@@ -54,15 +59,20 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
 
                             {/* Members */}
                             { members.length > 0 && (
-                                <View style={tw`justify-center items-center m-8 flex-shrink`}>
+                                <View style={tw.style(
+                                    `m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start`,
+                                    availableWidth < 1400 ? `w-full` : `mx-20`
+                                )}>
                                     <Text style={tw`text-lg self-start font-bold`}>Members</Text>
 
-                                    {members.map((member) =>
-                                        <TrainerCard
-                                            key={member.id}
-                                            trainer={member}
-                                            onPress={() => navigation.push('trainer', { id: member.id })} />
-                                    )}
+                                    <View style={tw`web:flex-row web:flex-wrap`}>
+                                        {members.map((member) =>
+                                            <TrainerCard
+                                                key={member.id}
+                                                trainer={member}
+                                                onPress={() => navigation.push('trainer', { id: member.id })} />
+                                        )}
+                                    </View>
                                 </View>
                             )}
                         </View>

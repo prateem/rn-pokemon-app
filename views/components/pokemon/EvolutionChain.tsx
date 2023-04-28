@@ -8,12 +8,14 @@ import PokemonCard from "./PokemonCard";
 import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {AppRoute} from "../../../flows/authenticated/AuthenticatedFlow";
+import {PropsWithStyle} from "../../../App";
 
 type EvolutionChainProps = {
     data: EvolutionChain
-}
+    viewing: number
+} & PropsWithStyle
 
-export default function EvolutionChainView({ data }: EvolutionChainProps) {
+export default function EvolutionChainView({ data, viewing, style }: EvolutionChainProps) {
     const chain = useMemo(() => {
         const mapped = groupBy(
             data.evolutions,
@@ -31,7 +33,7 @@ export default function EvolutionChainView({ data }: EvolutionChainProps) {
         mapped.forEach((_, key, __) => {
             if (!handled.includes(key)) {
                 handle(key)
-                elements.push((<EvolutionView key={`from-${key}`} map={mapped} display={key} />))
+                elements.push((<EvolutionView key={`from-${key}`} map={mapped} display={key} viewing={viewing} />))
             }
         })
 
@@ -44,12 +46,10 @@ export default function EvolutionChainView({ data }: EvolutionChainProps) {
     }
 
     return (
-        <View style={tw`m-8 p-3 rounded border border-gray-200 shadow-md flex-shrink`}>
-            <View>
-                <Text style={tw`text-lg font-bold pb-2`}>Evolution Chain:</Text>
+        <View style={tw.style(`m-4 p-3 rounded border border-gray-200 bg-white shadow-md web:flex-shrink android:w-full ios:w-full`, style)}>
+            <Text style={tw`text-lg font-bold pb-2`}>Evolution Chain:</Text>
 
-                {chain}
-            </View>
+            {chain}
         </View>
     )
 }
@@ -58,9 +58,10 @@ export default function EvolutionChainView({ data }: EvolutionChainProps) {
 type EvolutionViewProps = {
     map: Map<number, Evolution[]>
     display: number
+    viewing: number
 }
 
-function EvolutionView({ map, display }: EvolutionViewProps) {
+function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
     const pokemon = usePokemon()
     const navigation = useNavigation<StackNavigationProp<AppRoute>>()
     const evolvesTo = useMemo(() => map.get(display) || [], [map, display])
@@ -73,23 +74,31 @@ function EvolutionView({ map, display }: EvolutionViewProps) {
         const from = pokemon.data!.find((p) => p.number == display)!
 
         return (
-            <View>
+            <View style={tw`w-full items-center`}>
                 <PokemonCard
                     pokemon={from}
                     useCompactLayout={true}
                     style={tw`self-center`}
                     onPress={() => {
-                        navigation.push('pokemon', { number: from.number} )
+                        if (viewing != from.number) {
+                            navigation.push('pokemon', {number: from.number})
+                        }
                     }} />
 
                 <Image
                     style={tw`w-6 h-6 self-center`}
                     source={require('../../../assets/icons/down-arrow.png')} />
 
-                <View style={tw`flex-row flex-wrap`}>
+                <View style={tw`flex-row flex-wrap justify-center`}>
                     {evolvesTo.map((evolution) => {
                         if (map.has(evolution.to)) {
-                            return (<EvolutionView key={`from-${display}-to-${evolution.to}`} map={map} display={evolution.to} />)
+                            return (
+                                <EvolutionView
+                                    key={`from-${display}-to-${evolution.to}`}
+                                    map={map}
+                                    display={evolution.to}
+                                    viewing={viewing} />
+                            )
                         } else {
                             const to = pokemon.data!.find((p) => p.number == evolution.to)!
                             return (
@@ -99,7 +108,9 @@ function EvolutionView({ map, display }: EvolutionViewProps) {
                                     useCompactLayout={true}
                                     style={tw`self-center justify-center`}
                                     onPress={() => {
-                                        navigation.push('pokemon', { number: to.number} )
+                                        if (viewing != to.number) {
+                                            navigation.push('pokemon', {number: to.number})
+                                        }
                                     }} />
                             )
                         }

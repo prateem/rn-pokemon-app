@@ -1,28 +1,13 @@
 import dataInstance, {DataStore} from "../core/DataStore";
-import {Evolution, EvolutionChain, Pokemon, PokemonDetails} from "../models/Pokemon";
+import {Evolution, EvolutionChain, Pokemon, PokemonDetails, PokemonMove, PokemonMoveDetailed} from "../models/Pokemon";
 import axios from 'axios';
-import {DataLoadingState} from "./DataLoadingState";
 import {useQuery} from "react-query";
-
-export interface PokemonListDataState {
-    state: DataLoadingState
-    pokemon?: Array<Pokemon>
-}
-
-export interface PokemonInfoDataState {
-    state: DataLoadingState
-    info?: Pokemon
-}
-
-export interface PokedexEntriesDataState {
-    state: DataLoadingState
-    entries?: Array<string>
-}
 
 const dataStore: DataStore = dataInstance.insecure
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
 const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entries"
 const evolutionChainKeyBase: string = "Nascent-Pokemon-Evolution-Chain"
+const moveDataKeyBase: string = "Nascent-Pokemon-Move-Data"
 
 class PokemonService {
 
@@ -38,21 +23,17 @@ class PokemonService {
         let data = await axios.get("https://pokeapi.co/api/v2/pokemon/?limit=251")
 
         if (data && data.data.results) {
-            await Promise.all(
-                data.data.results
-                    .map((detail: any) =>
-                        axios.get(detail.url)
-                    ))
+            await Promise.all(data.data.results.map((detail: any) => axios.get(detail.url)))
                 .then((detailedPokemonList) => {
                     detailedPokemonList.forEach((pokemonData) => {
                         let pokemon = pokemonData.data
                         results.push(
                             {
                                 number: pokemon.id,
-                                name: pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1),
+                                name: pokemon.name.toTitleCase(),
                                 types: pokemon.types.map((type: any) => type.type.name),
                                 abilities: pokemon.abilities.map((ability: any) => ability.ability.name),
-                                moves: pokemon.moves.map((move: any) => move.move.name),
+                                moves: mapMoves(pokemon.moves),
                                 spriteUrl: pokemon.sprites.other['official-artwork'].front_default
                             }
                         )
@@ -109,7 +90,11 @@ class PokemonService {
             }
         }
 
-        const details = {pokemon, descriptions, evolutionChain}
+        const moves = await Promise.all(
+            pokemon.moves.map(it => getMoveData(it))
+        )
+
+        const details = {pokemon, descriptions, evolutionChain, moves}
 
         await dataStore.write(key, details)
 
@@ -160,6 +145,48 @@ class PokemonService {
         return evolutions
     }
 
+}
+
+function mapMoves(entries: any): PokemonMove[] {
+    return entries
+        .flatMap((entry: any) => {
+            const detailList = entry.version_group_details
+            const details = detailList.filter((it: any) => {
+                return it.move_learn_method.name
+                    && it.version_group.name
+                    && it.move_learn_method.name == 'level-up'
+                    && ['crystal', 'gold-silver'].includes(it.version_group.name)
+            }).reverse()[0]
+
+            if (!details) {
+                return []
+            }
+
+            return {
+                name: entry.move.name,
+                learnedAtLevel: details.level_learned_at,
+                url: entry.move.url
+            }
+        })
+}
+
+async function getMoveData(move: PokemonMove): Promise<PokemonMoveDetailed> {
+    const moveId = move.url
+        .replace(/^\/+|\/+$/g, '')
+        .split('/')
+        .pop()
+
+    const key = moveDataKeyBase + `_${moveId}`
+    const cached = await dataStore.read<PokemonMoveDetailed>(key)
+    if (cached) {
+        return cached
+    }
+
+    const allData = await axios.get(move.url)
+    const data: PokemonMoveDetailed = { move, data: { type: allData.data.type.name } }
+    await dataStore.write(key, data)
+
+    return data
 }
 
 let service = Object.freeze(new PokemonService())

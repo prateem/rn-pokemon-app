@@ -14,6 +14,7 @@ export default interface Trainer {
     id: number
     name: string
     specialty: string | null
+    asset: string | null
     pokemon: Array<number>
 }
 

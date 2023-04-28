@@ -1,5 +1,3 @@
-import Trainer from "./Trainer"
-
 export default interface Gym {
     number: number
     region: string

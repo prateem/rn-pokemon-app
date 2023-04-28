@@ -18,9 +18,14 @@ export default function AppInputField(props: AppInputFieldProps) {
             )}
 
             <View style={tw`flex-1 flex-row`}>
-                <TextInput style={tw.style(`my-2 p-2 h-10 rounded bg-white border border-gray-200 self-center`, props.style)}
-                           secureTextEntry={props.isSecure || false}
-                           onChangeText={props.onTextChange} />
+                <TextInput
+                    clearButtonMode={'always'}
+                    style={tw.style(
+                        `my-2 p-2 h-10 rounded bg-white border border-gray-200 self-center`,
+                        props.style
+                    )}
+                    secureTextEntry={props.isSecure || false}
+                    onChangeText={props.onTextChange} />
             </View>
         </View>
     )

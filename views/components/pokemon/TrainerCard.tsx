@@ -6,14 +6,11 @@ import {getColorForType} from "../../../models/Pokemon";
 
 type TrainerCardProps = {
     trainer: Trainer
+    showImage?: boolean | undefined
     onPress: () => void
 }
 
-export default function TrainerCard({ trainer, onPress }: TrainerCardProps) {
-
-    function getTextColor(isHovered: boolean): string {
-        return isHovered ? "#000" : (trainer.specialty ? "#fff" : "#000")
-    }
+export default function TrainerCard({ trainer, showImage, onPress }: TrainerCardProps) {
 
     return (
         <Pressable
@@ -22,15 +19,16 @@ export default function TrainerCard({ trainer, onPress }: TrainerCardProps) {
             style={(state) => [
                 tw.style(
                     `m-2 rounded-3 p-3 shadow-md border border-gray-200`,
+                    state.pressed && { opacity: 0.5 },
                     // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                     state.hovered
                         ? `bg-gray-100`
-                        : trainer.specialty && { backgroundColor: getColorForType(trainer.specialty) }
+                        : trainer.specialty ? { backgroundColor: getColorForType(trainer.specialty) } : `bg-white`
                 )
             ]}
             children={(state) => {
                 // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
-                const textColor = getTextColor(state.hovered)
+                const textColor = state.hovered ? "#000" : (trainer.specialty ? "#fff" : "#000")
 
                 return (<View style={
                     tw.style(

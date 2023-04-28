@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import {StackScreenProps} from '@react-navigation/stack'
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import {getPokemonDetails} from '../../services/PokemonService'
@@ -14,6 +14,7 @@ import {getColorForType} from "../../models/Pokemon";
 export default function PokemonInfo({ navigation, route }: StackScreenProps<AppRoute, 'pokemon'>) {
     const pokemonNumber = route.params.number
 
+    const [availableWidth, setAvailableWidth] = useState(0)
     const pokemonInfo = getPokemonDetails(pokemonNumber)
     useEffect(() => {
         navigation.setOptions({
@@ -27,14 +28,16 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
         return (<Text>Pokemon not found</Text>)
     } else {
         const data = pokemonInfo.data!
-
         return (
-            <View style={tw`flex-1 bg-white`}>
+            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
+                const { width } = event.nativeEvent.layout
+                setAvailableWidth(width)
+            }}>
                 <ScrollView>
-                    <Container>
-                        <View style={tw`flex-row flex-wrap justify-center items-center`}>
+                    <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
+                        <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
                             { /* Image and type badges */ }
-                            <View style={tw`justify-center items-center`}>
+                            <View style={tw`m-4 justify-center items-center`}>
                                 <Text style={tw`text-base`}>#{data.pokemon.number}</Text>
 
                                 <Image
@@ -55,10 +58,42 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                 </View>
                             </View>
 
-                            <EvolutionChainView data={data.evolutionChain} />
+                            <EvolutionChainView
+                                data={data.evolutionChain}
+                                viewing={pokemonNumber}
+                                style={tw.style(availableWidth < 1400 ? `w-full` : `mx-20`)}
+                            />
+
+                            <View style={tw`m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start w-full`}>
+                                <Collapsible title={"Moves"} style={tw`w-full`}>
+                                    <View style={tw`w-full border border-gray-400`}>
+                                        <View style={tw`flex-row flex-1 bg-gray-300 p-2 border-b border-gray-400`}>
+                                            <Text style={tw`text-base flex-3 font-bold self-center`}>Name</Text>
+                                            <Text style={tw`text-base flex-2 font-bold text-center self-center`}>Type</Text>
+                                            <Text style={tw`text-base flex-2 font-bold text-center self-center`}>@ Level</Text>
+                                        </View>
+
+                                        {
+                                            data.moves
+                                                .sort((a, b) => a.move.learnedAtLevel - b.move.learnedAtLevel)
+                                                .map((move, index) => {
+                                                    return (
+                                                        <View key={index} style={tw.style(`flex-row px-2 py-1`, index % 2 == 0 ? `bg-gray-200` : `bg-gray-100`)}>
+                                                            <Text style={tw`text-sm flex-3 self-center`}>{move.move.name.toTitleCase()}</Text>
+                                                            <View style={tw`flex-2 self-center`}>
+                                                                <Badge text={move.data.type.toTitleCase()} colorHex={getColorForType(move.data.type)} minWidth={80} />
+                                                            </View>
+                                                            <Text style={tw`text-sm flex-2 text-center self-center`}>{move.move.learnedAtLevel}</Text>
+                                                        </View>
+                                                    )
+                                                })
+                                        }
+                                    </View>
+                                </Collapsible>
+                            </View>
 
                             { /* Pokédex Entries */ }
-                            <View style={tw`m-8 p-3 border rounded shadow-md border border-gray-200 flex-shrink items-start`}>
+                            <View style={tw`m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start w-full`}>
                                 <Collapsible title={"Pokédex Entries"}>
                                     {
                                         data.descriptions.map((entry, index) => {
