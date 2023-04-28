@@ -9,6 +9,7 @@ import {useNavigation} from "@react-navigation/native";
 import {StackNavigationProp} from "@react-navigation/stack";
 import {AppRoute} from "../../../flows/authenticated/AuthenticatedFlow";
 import {PropsWithStyle} from "../../../App";
+import Card from "../Card";
 
 type EvolutionChainProps = {
     data: EvolutionChain
@@ -46,11 +47,11 @@ export default function EvolutionChainView({ data, viewing, style }: EvolutionCh
     }
 
     return (
-        <View style={tw.style(`m-4 p-3 rounded border border-gray-200 bg-white shadow-md web:flex-shrink android:w-full ios:w-full`, style)}>
+        <Card style={tw.style(`m-4 web:flex-shrink android:w-full ios:w-full`, style)}>
             <Text style={tw`text-lg font-bold pb-2`}>Evolution Chain:</Text>
 
             {chain}
-        </View>
+        </Card>
     )
 }
 

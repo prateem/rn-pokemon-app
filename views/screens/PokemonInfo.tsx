@@ -10,6 +10,7 @@ import tw from "twrnc";
 import Container from "../components/Container";
 import Badge from "../components/Badge";
 import {getColorForType} from "../../models/Pokemon";
+import Card from "../components/Card";
 
 export default function PokemonInfo({ navigation, route }: StackScreenProps<AppRoute, 'pokemon'>) {
     const pokemonNumber = route.params.number
@@ -64,7 +65,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                 style={tw.style(availableWidth < 1400 ? `w-full` : `mx-20`)}
                             />
 
-                            <View style={tw`m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start w-full`}>
+                            <Card style={tw.style(`m-4 flex-shrink item-start w-full`)}>
                                 <Collapsible title={"Moves"} style={tw`w-full`}>
                                     <View style={tw`w-full border border-gray-400`}>
                                         <View style={tw`flex-row flex-1 bg-gray-300 p-2 border-b border-gray-400`}>
@@ -90,10 +91,10 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                         }
                                     </View>
                                 </Collapsible>
-                            </View>
+                            </Card>
 
                             { /* Pokédex Entries */ }
-                            <View style={tw`m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start w-full`}>
+                            <Card style={tw`m-4 flex-shrink items-start w-full`}>
                                 <Collapsible title={"Pokédex Entries"}>
                                     {
                                         data.descriptions.map((entry, index) => {
@@ -104,7 +105,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                         })
                                     }
                                 </Collapsible>
-                            </View>
+                            </Card>
 
                             { /* Image and type badges */ }
                         </View>

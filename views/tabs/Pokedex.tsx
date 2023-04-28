@@ -28,7 +28,7 @@ export default function Pokedex() {
 
     const pokemonCardSize = useMemo(() => {
         // margin(card) + borders(card) + padding(card) + margin(image) + width(image) + extra space for padding
-        const width = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 60
+        const width = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 16
 
         // margin(card) + borders(card) + padding(card) + margin(image) + height(image) + lineHeight(text)
         const height = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 48

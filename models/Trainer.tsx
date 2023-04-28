@@ -1,3 +1,5 @@
+import {ImageKey} from "./mocks/trainers";
+
 export type RosterPokemon = {
     level: number
     number: number
@@ -14,7 +16,7 @@ export default interface Trainer {
     id: number
     name: string
     specialty: string | null
-    asset: string | null
+    asset: ImageKey
     pokemon: Array<number>
 }
 

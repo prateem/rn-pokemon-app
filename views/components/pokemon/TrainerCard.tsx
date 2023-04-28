@@ -3,6 +3,7 @@ import {View, Text, Image, Pressable, Platform} from 'react-native'
 import Trainer from "../../../models/Trainer";
 import tw from "twrnc";
 import {getColorForType} from "../../../models/Pokemon";
+import Card from "../Card";
 
 type TrainerCardProps = {
     trainer: Trainer
@@ -11,22 +12,21 @@ type TrainerCardProps = {
 }
 
 export default function TrainerCard({ trainer, showImage, onPress }: TrainerCardProps) {
-
     return (
-        <Pressable
+        <Card
             key={trainer.id}
-            onPress={(_) => onPress()}
-            style={(state) => [
+            onPress={onPress}
+            pressableStatefulStyle={(state) =>
                 tw.style(
-                    `m-2 rounded-3 p-3 shadow-md border border-gray-200`,
+                    `m-2 rounded-3`,
                     state.pressed && { opacity: 0.5 },
                     // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                     state.hovered
                         ? `bg-gray-100`
                         : trainer.specialty ? { backgroundColor: getColorForType(trainer.specialty) } : `bg-white`
                 )
-            ]}
-            children={(state) => {
+            }
+            pressableStatefulChildren={(state) => {
                 // @ts-ignore - error claims that 'hovered' does not exist on state, but it does
                 const textColor = state.hovered ? "#000" : (trainer.specialty ? "#fff" : "#000")
 

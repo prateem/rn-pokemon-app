@@ -4,6 +4,7 @@ import React from "react";
 import tw from "twrnc";
 
 type AppInputFieldProps = {
+    value?: string | undefined
     label?: string | undefined
     labelStyle?: ViewStyle,
     isSecure?: boolean | undefined

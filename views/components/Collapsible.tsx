@@ -1,11 +1,10 @@
-import React, {PropsWithChildren, useState} from "react";
-import {Text, View, Pressable, Image} from "react-native";
+import React, {useState} from "react";
+import {Text, View, Pressable, Image, ViewProps} from "react-native";
 import tw from 'twrnc'
-import {PropsWithStyle} from "../../App";
 
 type CollapsibleProps = {
     title: string
-} & PropsWithChildren & PropsWithStyle
+} & ViewProps
 
 export default function Collapsible({ title, children, style }: CollapsibleProps) {
     const [showContent, setShowContent] = useState(false)

@@ -8,6 +8,7 @@ import TrainerCard from "../components/pokemon/TrainerCard";
 import Divider from "../components/core/Divider";
 import tw from "twrnc";
 import Container from "../components/Container";
+import Card from "../components/Card";
 
 export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute, 'gym'>) {
     const gymNumber = route.params.number
@@ -30,7 +31,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
         const members = gymInfo.data!.members
 
         return (
-            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
+            <Card style={tw`flex-1`} onLayout={(event) => {
                 const { width } = event.nativeEvent.layout
                 setAvailableWidth(width)
             }}>
@@ -59,8 +60,8 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
 
                             {/* Members */}
                             { members.length > 0 && (
-                                <View style={tw.style(
-                                    `m-4 p-3 border rounded bg-white shadow-md border border-gray-200 flex-shrink items-start`,
+                                <Card style={tw.style(
+                                    `m-4 flex-shrink item-start`,
                                     availableWidth < 1400 ? `w-full` : `mx-20`
                                 )}>
                                     <Text style={tw`text-lg self-start font-bold`}>Members</Text>
@@ -73,12 +74,12 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                                                 onPress={() => navigation.push('trainer', { id: member.id })} />
                                         )}
                                     </View>
-                                </View>
+                                </Card>
                             )}
                         </View>
                     </Container>
                 </ScrollView>
-            </View>
+            </Card>
         )
     }
 }

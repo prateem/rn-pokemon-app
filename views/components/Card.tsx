@@ -1,22 +1,28 @@
-import React, {PropsWithChildren} from "react";
+import React, {ReactNode} from "react";
 import {PropsWithStyle} from "../../App";
-import {Pressable, View, ViewStyle} from "react-native";
+import {Pressable, PressableStateCallbackType, View, ViewProps, ViewStyle} from "react-native";
 import tw from "twrnc";
 
 type CardProps = {
     onPress?: (() => void) | undefined
-} & PropsWithChildren & PropsWithStyle
+    pressableStatefulStyle?: ((state: PressableStateCallbackType) => ViewStyle) | undefined
+    pressableStatefulChildren?: ((state: PressableStateCallbackType) => ReactNode) | undefined
+} & PropsWithStyle & ViewProps
 
 export default function Card(props: CardProps) {
     const style: ViewStyle = tw.style(
-        `m-2 rounded p-3 shadow-md border border-gray-200`,
+        `rounded p-3 bg-white border border-gray-200 shadow-md`,
         props.style
     )
 
     if (props.onPress) {
+        const onPress: () => void = props.onPress || { }
+
         return (
-            <Pressable onPress={props.onPress} style={style}>
-                {props.children}
+            <Pressable
+                onPress={onPress}
+                style={(state) => tw.style(style, props.pressableStatefulStyle?.(state))}>
+                {props.pressableStatefulChildren || props.children}
             </Pressable>
         )
     }
