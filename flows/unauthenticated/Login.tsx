@@ -66,19 +66,19 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{flex: 1}}>
-            <View style={{flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+            style={tw`flex-1`}>
+            <View style={tw`flex-1 flex-row w-full self-center justify-center items-center`}>
                 <Image
-                    style={{ width: imageSize, height: imageSize, alignSelf: 'flex-start', margin: 8 }}
+                    style={tw.style(`self-start, m-2`, { width: imageSize, height: imageSize })}
                     source={require('../../assets/icons/trainer-info.png')} />
 
-                <View style={[
+                <View style={tw.style(
                     {marginEnd: imageSize},
-                    Platform.OS != 'web' ? { flex: 1 } : { minWidth: 300 }
-                ]}>
-                    <Text style={tw`text-5xl font-bold`}>Login</Text>
+                    Platform.OS == 'web' ? `w-min-75` : `flex-1`
+                )}>
+                    <Text style={tw`text-3xl web:text-5xl font-bold`}>Login</Text>
 
-                    <View style={{ marginTop: 12, marginBottom: 6 }}>
+                    <View style={tw`mt-3 mb-1`}>
                         <AppInputField
                             label={"Username"}
                             style={tw`min-w-full`}
@@ -96,7 +96,7 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
                     </View>
 
 
-                    <View style={{ marginTop: 6, marginBottom: 12 }}>
+                    <View style={tw`mt-1 mb-3`}>
                         <AppInputField
                             label={"Password"}
                             style={tw`min-w-full`}

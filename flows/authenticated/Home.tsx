@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Image, Pressable, View} from 'react-native';
+import {Image, Pressable, View, Text} from 'react-native';
 import type {StackScreenProps} from '@react-navigation/stack'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -108,10 +108,17 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={0}
-                    style={tw`shadow-md`}
+                    style={tw`bg-white rounded-3xl shadow-black shadow-opacity-15 shadow-radius-1 shadow-offset-[0]/[-2]`}
                     enablePanDownToClose={true}
                     backdropComponent={MenuBackdrop}
                     snapPoints={snapPoints}
+                    handleComponent={() => {
+                        return (
+                            <Pressable onPress={() => bottomSheetRef.current?.close()}>
+                                <View style={tw`w-10 h-1 my-4 bg-gray-500 rounded-2xl self-center`} />
+                            </Pressable>
+                        )
+                    }}
                     onChange={(index) => {
                         if (index == -1) {
                             // dragged down to close

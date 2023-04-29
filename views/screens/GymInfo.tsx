@@ -24,14 +24,14 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
     if (gymInfo.isLoading || gymInfo.isIdle) {
         return (<Loader/>)
     } else if (gymInfo.isError) {
-        return (<Text>Error getting trainer info</Text>)
+        return (<Text>Error getting gym info</Text>)
     } else {
         const gym = gymInfo.data!.gym
         const leader = gymInfo.data!.leader!
         const members = gymInfo.data!.members
 
         return (
-            <Card style={tw`flex-1`} onLayout={(event) => {
+            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
                 const { width } = event.nativeEvent.layout
                 setAvailableWidth(width)
             }}>
@@ -61,7 +61,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                             {/* Members */}
                             { members.length > 0 && (
                                 <Card style={tw.style(
-                                    `m-4 flex-shrink item-start`,
+                                    `m-4 flex-shrink items-start`,
                                     availableWidth < 1400 ? `w-full` : `mx-20`
                                 )}>
                                     <Text style={tw`text-lg self-start font-bold`}>Members</Text>
@@ -79,7 +79,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                         </View>
                     </Container>
                 </ScrollView>
-            </Card>
+            </View>
         )
     }
 }
