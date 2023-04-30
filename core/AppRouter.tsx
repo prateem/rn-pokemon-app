@@ -8,6 +8,7 @@ import { useAppState } from './AppState'
 import Loader from '../views/components/core/Loader'
 import UnauthenticatedFlow from "../flows/unauthenticated/UnauthenticatedFlow";
 import AuthenticatedFlow from "../flows/authenticated/AuthenticatedFlow";
+import tw from "twrnc";
 
 const authenticator = new Authenticator();
 
@@ -41,7 +42,7 @@ export default function AppRouter() {
     }, []);
 
     return (
-        <View style={{flex: 1}}>
+        <View style={tw`flex-1`}>
             {hydrating
                 ? (<Loader />)
                 : (
