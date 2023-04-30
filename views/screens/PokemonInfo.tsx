@@ -65,7 +65,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                 style={tw.style(availableWidth < 1400 ? `w-full` : `mx-20`)}
                             />
 
-                            <Card style={tw.style(`m-4 flex-shrink item-start w-full`)}>
+                            <Card style={tw.style(`m-4 flex-shrink items-start w-full`)}>
                                 <Collapsible title={"Moves"} style={tw`w-full`}>
                                     <View style={tw`w-full border border-gray-400`}>
                                         <View style={tw`flex-row flex-1 bg-gray-300 p-2 border-b border-gray-400`}>

@@ -39,42 +39,34 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
             }}>
                 <ScrollView>
                     <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
-                        <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
+                        <View style={tw`flex-col justify-center items-center`}>
                             { /* General Information */}
-                            <View style={tw`m-4 justify-center items-start web:items-center android:w-full ios:w-full android:px-2 ios:px-2`}>
-                                <View style={tw`flex-row flex-1 justify-center`}>
-                                    <View style={tw`flex-row flex-1 items-center`}>
-                                        <Image
-                                            resizeMode={'contain'}
-                                            source={TRAINER_IMAGES[trainer.asset].uri}
-                                            style={tw`w-20 h-20 web:w-30 web:h-30 mr-4 border border-gray-500`} />
+                            <View style={tw`m-4 justify-center items-start web:items-center web:flex-1 android:w-full ios:w-full android:px-2 ios:px-2`}>
+                                <View style={tw`flex-row flex-1 justify-center items-center`}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={TRAINER_IMAGES[trainer.asset].uri}
+                                        style={tw`w-30 h-30 border border-gray-500`} />
 
-                                        <View style={tw`mr-4 flex-1`}>
+                                    <View style={tw`flex-row flex-wrap flex-1 items-center`}>
+                                        <View style={tw`mx-4 max-w-full`}>
                                             <Text style={tw`text-2xl web:text-3xl font-bold`}>{trainer.name}</Text>
 
                                             <Text style={tw`text-sm web:text-base my-2`}>Trainer ID: {trainer.id}</Text>
                                         </View>
+
+                                        {trainer.specialty && (
+                                            <View style={tw`mx-4 justify-center text-center`}>
+                                                <Text style={tw`text-xs web:text-sm text-center`}>Specialty</Text>
+
+                                                <Badge
+                                                    text={trainer.specialty.toTitleCase()}
+                                                    colorHex={getColorForType(trainer.specialty)}
+                                                    minWidth={80} />
+                                            </View>
+                                        )}
                                     </View>
-
-
-                                    {trainer.specialty && (
-                                        <View style={tw`justify-center text-center`}>
-                                            <Text style={tw`text-xs web:text-sm text-center`}>Specialty</Text>
-
-                                            <Badge
-                                                text={trainer.specialty.toTitleCase()}
-                                                colorHex={getColorForType(trainer.specialty)}
-                                                minWidth={80} />
-                                        </View>
-                                    )}
                                 </View>
-
-                                {/*<Image*/}
-                                {/*    resizeMode='contain'*/}
-                                {/*    style={{ width: 120, height: 120, margin: 8 }}*/}
-                                {/*    source={{ uri: pokemon.spriteUrl }} />*/}
-
-
                             </View>
 
                             {/* Pokemon */}
