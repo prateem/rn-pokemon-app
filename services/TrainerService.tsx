@@ -3,7 +3,7 @@ import dataInstance, {DataStore} from "../core/DataStore";
 import trainerMocks from "../models/mocks/trainers"
 import {Pokemon} from "../models/Pokemon";
 import {usePokemon} from "./PokemonService";
-import {useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 
 export type TrainerClassifications = {
     common: Array<Trainer>
@@ -13,17 +13,28 @@ export type TrainerClassifications = {
 
 export type TrainerInfoModel = {
     trainer: Trainer,
-    pokemon: Array<Pokemon>
+    pokemon: Array<{pokemon: Pokemon, level: number}>
 }
 
-const dataStore: DataStore = dataInstance.insecure
+const dataStore: DataStore = dataInstance.inMemory
 const trainerDataKey: string = "Nascent-Trainer-Data"
 
 class TrainerService {
 
     // DATA
     async fetchTrainers(): Promise<TrainerClassifications> {
-        return trainerMocks
+        const cached = await dataStore.read<TrainerClassifications>(trainerDataKey)
+        if (cached) {
+            return cached
+        }
+
+        const data = trainerMocks
+        await dataStore.write(trainerDataKey, data)
+        return data
+    }
+
+    async addPokemonToTrainer(trainer: Trainer, pokemon: Pokemon) {
+        return
     }
 
 }
@@ -31,6 +42,17 @@ class TrainerService {
 let service = Object.freeze(new TrainerService())
 export function useTrainers() {
     return useQuery<TrainerClassifications, Error>('trainers', service.fetchTrainers)
+}
+
+export function addPokemon(trainer: Trainer, pokemon: Pokemon) {
+    const client = useQueryClient()
+
+    return useMutation({
+        mutationFn: () => service.addPokemonToTrainer(trainer, pokemon),
+        onSuccess: () => {
+            client.invalidateQueries({ queryKey: ['trainers' ]})
+        }
+    })
 }
 
 export function getTrainerInfo(trainerId: number) {
@@ -48,10 +70,15 @@ export function getTrainerInfo(trainerId: number) {
         queryFn: async () => {
             return {
                 trainer,
-                pokemon: trainer.pokemon.flatMap((pokemonNumber) => {
-                    return pokemon.data
-                            ?.find((pokemon) => pokemon.number == pokemonNumber)
-                        || []
+                pokemon: trainer.pokemon.flatMap((rosterPokemon) => {
+                    const p = pokemon.data
+                        ?.find((pokemon) => pokemon.number == rosterPokemon.number)
+
+                    if (p) {
+                        return {pokemon: p, level: rosterPokemon.level}
+                    }
+
+                    return []
                 })
             }
         },

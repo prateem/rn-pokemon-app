@@ -60,9 +60,10 @@ type EvolutionViewProps = {
     map: Map<number, Evolution[]>
     display: number
     viewing: number
+    subtext?: string
 }
 
-function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
+function EvolutionView({ map, display, viewing, subtext }: EvolutionViewProps) {
     const pokemon = usePokemon()
     const navigation = useNavigation<StackNavigationProp<AppRoute>>()
     const evolvesTo = useMemo(() => map.get(display) || [], [map, display])
@@ -80,6 +81,7 @@ function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
                     pokemon={from}
                     useCompactLayout={true}
                     style={tw`self-center`}
+                    subtext={subtext}
                     onPress={() => {
                         if (viewing != from.number) {
                             navigation.push('pokemon', {number: from.number})
@@ -92,13 +94,15 @@ function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
 
                 <View style={tw`flex-row flex-wrap justify-center`}>
                     {evolvesTo.map((evolution) => {
+                        // does the Pokémon being looked at also evolve?
                         if (map.has(evolution.to)) {
                             return (
                                 <EvolutionView
                                     key={`from-${display}-to-${evolution.to}`}
                                     map={map}
                                     display={evolution.to}
-                                    viewing={viewing} />
+                                    viewing={viewing}
+                                    subtext={evolution.trigger} />
                             )
                         } else {
                             const to = pokemon.data!.find((p) => p.number == evolution.to)!
@@ -106,6 +110,7 @@ function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
                                 <PokemonCard
                                     key={`from-${display}-to-${evolution.to}`}
                                     pokemon={to}
+                                    subtext={evolution.trigger}
                                     useCompactLayout={true}
                                     style={tw`self-center justify-center`}
                                     onPress={() => {
@@ -130,7 +135,7 @@ function EvolutionView({ map, display, viewing }: EvolutionViewProps) {
  * and returns a Map of the array grouped by the grouping function.
  *
  * @param list An array of type V.
- * @param keyGetter A Function that takes the the Array type V as an input, and returns a value of type K.
+ * @param keyGetter A Function that takes the Array type V as an input, and returns a value of type K.
  *                  K is generally intended to be a property key of V.
  *
  * @returns Map of the array grouped by the grouping function.

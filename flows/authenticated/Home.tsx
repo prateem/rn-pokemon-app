@@ -126,7 +126,7 @@ export default function Home({ navigation }: StackScreenProps<AppRoute, 'home'>)
                         }
                      }}>
 
-                    <View style={tw`px-4 py-2 justify-center items-center`}>
+                    <View style={tw`px-4 py-2 justify-center`}>
                         <AppMenu navigation={navigation} />
                     </View>
                 </BottomSheet>

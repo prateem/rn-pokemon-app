@@ -1,18 +1,22 @@
 import {PropsWithStyle} from "../../App";
-import {Text, TextInput, View, ViewStyle} from "react-native";
+import {Text, TextInput, TextInputProps, View, ViewProps, ViewStyle} from "react-native";
 import React from "react";
 import tw from "twrnc";
 
 type AppInputFieldProps = {
-    value?: string | undefined
     label?: string | undefined
+    labelProps?: ViewProps | undefined,
     labelStyle?: ViewStyle,
-    fieldStyle?: ViewStyle,
-    isSecure?: boolean | undefined
-    onTextChange: (text: string) => void
+    inputProps?: TextInputProps | undefined
 } & PropsWithStyle
 
 export default function AppInputField(props: AppInputFieldProps) {
+    let inputProps: any | undefined = undefined;
+    if (props.inputProps) {
+        const { style: ignoredStyle, ...textInputProps } = props.inputProps
+        inputProps = textInputProps
+    }
+
     return (
         <View style={tw.style(props.style)}>
             {props.label && (
@@ -20,13 +24,11 @@ export default function AppInputField(props: AppInputFieldProps) {
             )}
 
             <TextInput
-                clearButtonMode={'always'}
+                {...inputProps}
                 style={tw.style(
                     `my-2 p-2 h-10 rounded bg-white border border-gray-200 self-center min-w-full`,
-                    props.fieldStyle
-                )}
-                secureTextEntry={props.isSecure || false}
-                onChangeText={props.onTextChange} />
+                    props.style
+                )} />
         </View>
     )
 }

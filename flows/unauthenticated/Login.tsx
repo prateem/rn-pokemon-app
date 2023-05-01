@@ -82,13 +82,19 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
                         <AppInputField
                             label={"Username"}
                             style={tw`min-w-full`}
-                            onTextChange={(text: string) => setCredentials({
-                                ...credentials,
-                                username: {
-                                    error: false,
-                                    value: text
+                            inputProps={{
+                                secureTextEntry: true,
+                                onChangeText: (text) => {
+                                    setCredentials({
+                                        ...credentials,
+                                        username: {
+                                            error: false,
+                                            value: text
+                                        }
+                                    })
                                 }
-                            })} />
+                            }}
+                        />
 
                         {credentials.username.error && (
                             <Text style={tw`text-sm text-red`}>Please enter your username.</Text>
@@ -100,15 +106,18 @@ export default function Login({ navigation }: StackScreenProps<UnauthenticatedRo
                         <AppInputField
                             label={"Password"}
                             style={tw`min-w-full`}
-                            isSecure={true}
-                            onTextChange={(text: string) =>
-                                setCredentials({
-                                    ...credentials,
-                                    password: {
-                                        error: false,
-                                        value: text
-                                    }
-                                })} />
+                            inputProps={{
+                                secureTextEntry: true,
+                                onChangeText: (text) => {
+                                    setCredentials({
+                                        ...credentials,
+                                        password: {
+                                            error: false,
+                                            value: text
+                                        }
+                                    })
+                                }
+                            }} />
 
                         {credentials.password.error && (
                             <Text style={tw`text-sm text-red`}>Please enter your password.</Text>

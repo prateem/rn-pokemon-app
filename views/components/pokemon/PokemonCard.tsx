@@ -1,28 +1,36 @@
 import React, {useMemo} from 'react'
-import {View, Text, Image, Platform, ViewStyle, Pressable} from 'react-native'
+import {Image, Platform, Pressable, Text, View} from 'react-native'
 import {getColorForType, Pokemon} from '../../../models/Pokemon'
-import { LinearGradient } from 'expo-linear-gradient';
+import {LinearGradient} from 'expo-linear-gradient';
 import tw from "twrnc";
 import Card from "../Card";
+import {PropsWithStyle} from "../../../App";
 
 type PokemonCardProps = {
     pokemon: Pokemon,
+    subtext?: string,
     useCompactLayout: boolean,
-    onPress: () => void,
-    style?: ViewStyle
-}
+    onPress?: () => void
+} & PropsWithStyle
 
-export default function PokemonCard({ pokemon, useCompactLayout, onPress, style }: PokemonCardProps) {
+export default function PokemonCard(props: PokemonCardProps) {
+    const {
+        pokemon,
+        subtext,
+        useCompactLayout,
+        onPress,
+        style
+    } = props
 
     const backgroundColors = useMemo(() => {
-        const mapped = pokemon.types
+        return pokemon.types
             .flatMap((type) => {
                 const color = getColorForType(type)
-                if (!color) { return [] }
+                if (!color) {
+                    return []
+                }
                 return color
             })
-
-        return mapped
     }, [pokemon])
 
     return (
@@ -38,7 +46,7 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress, style 
                                     colors={state.hovered ? ['#cccccc', '#cccccc'] : ['#00000000', '#00000033']}
                                     style={tw`rounded-3`}>
                                     <View style={tw`p-3`}>
-                                        { useCompactLayout ? _getCompactBody(pokemon) : _getFullBody(pokemon) }
+                                        { useCompactLayout ? _getCompactBody(pokemon, subtext) : _getFullBody(pokemon, subtext) }
                                     </View>
                                 </LinearGradient>
                             </View>
@@ -52,7 +60,7 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress, style 
                                 start={{x: 0, y: 1}}
                                 end={{x: 1, y: 0}}>
                                 <View style={tw`p-3`}>
-                                    { useCompactLayout ? _getCompactBody(pokemon) : _getFullBody(pokemon) }
+                                    { useCompactLayout ? _getCompactBody(pokemon, subtext) : _getFullBody(pokemon, subtext) }
                                 </View>
                             </LinearGradient>
                         )}
@@ -62,14 +70,18 @@ export default function PokemonCard({ pokemon, useCompactLayout, onPress, style 
     )
 }
 
-function _getCompactBody(pokemon: Pokemon): JSX.Element {
+function _getCompactBody(pokemon: Pokemon, subtext?: string): JSX.Element {
     return (
         <View style={
             tw.style(
                 `flex-row justify-center items-center`,
                 Platform.OS == 'web' ? `w-52` : `min-w-full`
             )}>
-            <Text style={tw`text-base text-white font-bold flex-1`}>{pokemon.name}</Text>
+
+            <View style={tw`flex-1`}>
+                <Text style={tw`text-base text-white font-bold`}>{pokemon.name}</Text>
+                { subtext && subtext.length > 0 && <Text style={tw`text-sm text-white`}>{subtext}</Text>}
+            </View>
 
             <Image
                 resizeMode='contain'
@@ -80,8 +92,7 @@ function _getCompactBody(pokemon: Pokemon): JSX.Element {
     )
 }
 
-// 40 + (120|100) + 16 + 48 + 2
-function _getFullBody(pokemon: Pokemon): JSX.Element {
+function _getFullBody(pokemon: Pokemon, subtext?: string): JSX.Element {
     const imageSize = (Platform.OS == 'web' ? 120 : 100)
     return (
         <View
@@ -97,6 +108,13 @@ function _getFullBody(pokemon: Pokemon): JSX.Element {
                         height: imageSize
                     })}
                 source={{ uri: pokemon.spriteUrl }} />
+
+            {subtext && subtext.length > 0 &&
+                <Text
+                    numberOfLines={1}
+                    ellipsizeMode={"tail"}
+                    style={tw`text-small self-start my-1`}>{subtext}</Text>
+            }
 
             <Text
                 numberOfLines={1}

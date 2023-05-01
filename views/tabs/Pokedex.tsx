@@ -118,7 +118,9 @@ export default function Pokedex() {
 
                     <AppInputField
                         style={tw`flex-1 mx-3`}
-                        onTextChange={(t) => setSearched(t)}/>
+                        inputProps={{
+                            onChangeText: (t) => setSearched(t)
+                        }} />
                 </View>
             </KeyboardAvoidingView>
         )

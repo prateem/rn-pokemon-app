@@ -1,24 +1,16 @@
 import React from "react";
-import {View, StyleSheet} from "react-native";
+import {View, ViewProps} from "react-native";
+import {PropsWithStyle} from "../../../App";
+import tw from "twrnc";
 
-declare type DividerProps = {
-    color?: string
-    marginVertical?: number
-    marginHorizontal?: number
-}
-
-export default function Divider({ color, marginVertical, marginHorizontal } : DividerProps) {
-    const dividerColor = color || 'black'
-
+export default function Divider(props: ViewProps & PropsWithStyle) {
     return (
         <View
-            style={{
-                alignSelf: 'stretch',
-                marginVertical: marginVertical || 0,
-                marginHorizontal: marginHorizontal || 0,
-                borderBottomColor: dividerColor,
-                borderBottomWidth: StyleSheet.hairlineWidth,
-            }}
+            {...props}
+            style={tw.style(
+                `h-px self-stretch border-b`,
+                props.style
+            )}
         />
     )
 }

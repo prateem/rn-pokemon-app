@@ -33,6 +33,7 @@ export interface EvolutionChain {
 export interface Evolution {
     from: number
     to: number
+    trigger?: string
 }
 
 const pokemonTypeToColorMap = {

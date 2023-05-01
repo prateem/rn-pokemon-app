@@ -8,6 +8,32 @@ export interface DataStore {
     clear(): void
 }
 
+class InMemoryDataStore implements DataStore {
+    items: any = { }
+
+    clear(): void {
+        this.items = { }
+    }
+
+    async delete(key: string): Promise<void> {
+        this.items.delete(key)
+    }
+
+    async read<T>(key: string): Promise<T | null> {
+        const entry = this.items[key]
+        if (entry && entry as T) {
+            return entry
+        }
+
+        return null
+    }
+
+    async write(key: string, value: any): Promise<void> {
+        this.items[key] = value
+    }
+
+}
+
 class InsecureDataStore implements DataStore {
     async read<T>(key: string): Promise<T | null> {
         try {
@@ -79,9 +105,12 @@ class SecureDataStore implements DataStore {
     }
 }
 
+let inMemoryDataStore = Object.freeze(new InMemoryDataStore())
 let insecureDataStore = Object.freeze(new InsecureDataStore())
 let secureDataStore = Object.freeze(new SecureDataStore())
+
 export default {
+    inMemory: inMemoryDataStore,
     insecure: insecureDataStore,
     secure: secureDataStore
 }

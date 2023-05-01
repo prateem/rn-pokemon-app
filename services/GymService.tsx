@@ -16,13 +16,20 @@ export type GymInfoModel = {
     members: Array<Trainer>
 }
 
-const dataStore: DataStore = dataInstance.insecure
+const dataStore: DataStore = dataInstance.inMemory
 const gymDataKey: string = "Nascent-Gym-Data"
 
 class GymService {
     // DATA
     async fetchGyms(): Promise<RegionalGyms> {
-        return gymMocks
+        const cached = await dataStore.read<RegionalGyms>(gymDataKey)
+        if (cached) {
+            return cached
+        }
+
+        const data = gymMocks
+        await dataStore.write(gymDataKey, data)
+        return data
     }
 }
 

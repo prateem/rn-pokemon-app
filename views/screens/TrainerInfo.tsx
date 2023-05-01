@@ -77,12 +77,13 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
                                 <Text style={tw`text-lg self-start font-bold`}>Pokémon</Text>
 
                                 <View style={tw`web:flex-row web:flex-wrap web:justify-center`}>
-                                    {pokemon?.map((p, index) =>
+                                    {pokemon?.map((r, index) =>
                                         <PokemonCard
-                                            key={`${p.number}-${index}`}
-                                            pokemon={p}
+                                            key={`${r.pokemon.number}-${index}`}
+                                            subtext={`Lv. ${r.level}`}
+                                            pokemon={r.pokemon}
                                             useCompactLayout={true}
-                                            onPress={() => navigation.push('pokemon', { number: p.number })} />
+                                            onPress={() => navigation.push('pokemon', { number: r.pokemon.number })} />
                                     )}
                                 </View>
                             </Card>

@@ -3,7 +3,7 @@ import {Evolution, EvolutionChain, Pokemon, PokemonDetails, PokemonMove, Pokemon
 import axios from 'axios';
 import {useQuery} from "react-query";
 
-const dataStore: DataStore = dataInstance.insecure
+const dataStore: DataStore = dataInstance.inMemory
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
 const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entries"
 const evolutionChainKeyBase: string = "Nascent-Pokemon-Evolution-Chain"
@@ -13,8 +13,8 @@ class PokemonService {
 
     // API CALLS
     async fetchPokemon(): Promise<Array<Pokemon>> {
-        const dataStore = dataInstance.insecure
-        let cached = await dataStore.read<Array<Pokemon>>(pokemonDataKey)
+        const insecureStore = dataInstance.insecure
+        let cached = await insecureStore.read<Array<Pokemon>>(pokemonDataKey)
         if (cached) {
             return cached
         }
@@ -40,7 +40,7 @@ class PokemonService {
                     })
                 })
                 .then((_) => {
-                    dataStore.write(pokemonDataKey, results)
+                    insecureStore.write(pokemonDataKey, results)
                 })
         }
 
@@ -133,8 +133,39 @@ class PokemonService {
                 .split('/')
                 .pop()
 
+            let trigger: string | undefined = undefined
+            let details = e.evolution_details[0]
+            console.log(details)
+            if (details.trigger.name == 'level-up') {
+                const lvl = details.min_level
+
+                if (lvl) {
+                    trigger = `Lv. ${e.evolution_details[0].min_level}`
+                } else {
+                    const time = details.time_of_day
+                    const happiness = details.min_happiness
+
+                    if (happiness && time.length > 0) {
+                        trigger = `Lv. up (happiness @ ${time})`
+                    } else if (happiness) {
+                        trigger = `Lv. up (happiness)`
+                    }
+                }
+            } else if (details.trigger.name == 'use-item') {
+                trigger = details.item.name.split('-').join(' ').toTitleCase()
+            } else if (details.trigger.name == 'trade') {
+                const item = details.held_item && details.held_item.name
+                if (item) {
+                    trigger = `Trade (${item.split('-').join(' ').toTitleCase()})`
+                } else {
+                    trigger = `Trade`
+                }
+            }
+
             if (fromNumber <= 251 && toNumber <= 251) {
-                evolutions.push({ from: fromNumber, to: toNumber })
+                console.log("from", fromNumber, "to", toNumber, "using trigger", trigger)
+
+                evolutions.push({ from: fromNumber, to: toNumber, trigger })
             }
 
             evolutions.push(

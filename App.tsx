@@ -10,7 +10,6 @@ import { useDeviceContext } from 'twrnc';
 import tw from "twrnc";
 
 const queryClient = new QueryClient()
-
 export default function App() {
     useDeviceContext(tw);
 

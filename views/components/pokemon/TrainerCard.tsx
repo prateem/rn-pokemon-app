@@ -4,14 +4,14 @@ import Trainer from "../../../models/Trainer";
 import tw from "twrnc";
 import {getColorForType} from "../../../models/Pokemon";
 import Card from "../Card";
+import {TRAINER_IMAGES} from "../../../models/mocks/trainers";
 
 type TrainerCardProps = {
     trainer: Trainer
-    showImage?: boolean | undefined
     onPress: () => void
 }
 
-export default function TrainerCard({ trainer, showImage, onPress }: TrainerCardProps) {
+export default function TrainerCard({ trainer, onPress }: TrainerCardProps) {
     return (
         <Pressable
             key={trainer.id}
@@ -33,17 +33,17 @@ export default function TrainerCard({ trainer, showImage, onPress }: TrainerCard
                     }>
                         <View style={
                             tw.style(
-                                `justify-center items-center`,
+                                `justify-center`,
                                 Platform.OS == 'web' ? `w-52` : `min-w-full`
                             )}>
-                            <Text style={tw.style(`text-sm self-end`, { color: textColor })}>{trainer.id}</Text>
-
-                            {/*<Image*/}
-                            {/*    resizeMode='contain'*/}
-                            {/*    style={{ width: 120, height: 120, alignSelf: 'center', margin: 8, }}*/}
-                            {/*    source={{ uri: pokemon.spriteUrl }} />*/}
-
-                            <Text style={tw.style(`text-base self-start font-bold`, { color: textColor })}>{trainer.name}</Text>
+                                <View style={tw`flex-row items-center`}>
+                                    <Image
+                                        resizeMode='contain'
+                                        style={tw`w-10 h-10 self-center rounded-3xl border border-gray-500 bg-white`}
+                                        source={TRAINER_IMAGES[trainer.asset].uri} />
+                                    <Text style={tw.style(`mx-3 text-base font-bold flex-1`, { color: textColor })}>{trainer.name}</Text>
+                                    <Text style={tw.style(`text-sm`, { color: textColor })}>{trainer.id}</Text>
+                                </View>
                         </View>
                     </Card>
                 )

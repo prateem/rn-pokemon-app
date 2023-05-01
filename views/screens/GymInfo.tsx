@@ -50,9 +50,10 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                                 {/*    source={{ uri: pokemon.spriteUrl }} />*/}
 
 
-                                <Divider marginVertical={8} />
+                                <Divider style={tw`my-2`} />
 
                                 <Text style={tw`text-sm`}>Gym Leader</Text>
+
                                 <TrainerCard
                                     trainer={leader}
                                     onPress={() => navigation.push('trainer', { id: leader.id })} />
