@@ -8,7 +8,7 @@ export default function Divider(props: ViewProps & PropsWithStyle) {
         <View
             {...props}
             style={tw.style(
-                `h-px self-stretch border-b`,
+                `h-px self-stretch border-b border-gray-300`,
                 props.style
             )}
         />
