@@ -73,7 +73,8 @@ export default function AppRouter() {
                                         // screens
                                         pokemon: 'pokemon/:number',
                                         trainer: 'trainer/:id',
-                                        gym: 'gym/:number'
+                                        gym: 'gym/:number',
+                                        addTrainer: 'trainer/add'
                                     }
                                 }
                             }

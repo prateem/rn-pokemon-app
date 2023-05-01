@@ -16,11 +16,18 @@ import Loader from "../components/core/Loader";
 import { useHeaderHeight } from '@react-navigation/elements'
 import tw from "twrnc";
 import AppInputField from "../components/AppInputField";
+import {Pokemon} from "../../models/Pokemon";
+import {PropsWithStyle} from "../../App";
 
 // Scroll position 'memory'
 let pokemonToScrollTo: number | null = 0
 
-export default function Pokedex() {
+type PokedexProps = {
+    isNested: boolean | undefined,
+    onSelectPokemon?: (pokemon: Pokemon) => void
+} & PropsWithStyle
+
+export default function Pokedex(props: PokedexProps) {
     const pokemon = usePokemon()
 
     const [searched, setSearched] = useState<string>("")
@@ -62,9 +69,10 @@ export default function Pokedex() {
 
         return (
             <KeyboardAvoidingView
+                enabled={!props.isNested}
                 keyboardVerticalOffset={headerHeight}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={tw`flex-1 bg-white`}>
+                style={tw.style(`flex-1 bg-white`, props.style)}>
 
                 <FlatList
                     style={tw`flex-1 bg-white p-3`}
@@ -105,10 +113,14 @@ export default function Pokedex() {
                             pokemon={pokemon}
                             useCompactLayout={false}
                             onPress={() => {
-                                navigation.push('pokemon', {number: pokemon.number})
-                                InteractionManager.runAfterInteractions(() => {
-                                    pokemonToScrollTo = pokemon.number
-                                })
+                                if (props.onSelectPokemon) {
+                                    props.onSelectPokemon(pokemon)
+                                } else {
+                                    navigation.push('pokemon', {number: pokemon.number})
+                                    InteractionManager.runAfterInteractions(() => {
+                                        pokemonToScrollTo = pokemon.number
+                                    })
+                                }
                             }}/>
                 }}/>
 
@@ -119,6 +131,7 @@ export default function Pokedex() {
                     <AppInputField
                         style={tw`flex-1 mx-3`}
                         inputProps={{
+                            style: tw`flex-1 h-full`,
                             onChangeText: (t) => setSearched(t)
                         }} />
                 </View>

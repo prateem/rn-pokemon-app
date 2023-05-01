@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import Loader from '../components/core/Loader';
 import {getTrainerInfo} from "../../services/TrainerService";
-import {View, Text, ScrollView, Image} from "react-native";
+import {View, Text, ScrollView, Image, useWindowDimensions} from "react-native";
 import PokemonCard from "../components/pokemon/PokemonCard";
 import tw from "twrnc";
 import Container from "../components/Container";
@@ -14,7 +14,7 @@ import Card from "../components/Card";
 
 export default function TrainerInfo({ navigation, route }: StackScreenProps<AppRoute, 'trainer'>) {
     const trainerId = route.params.id
-    const [availableWidth, setAvailableWidth] = useState(0)
+    const dimensions = useWindowDimensions()
 
     // Fetch Trainer info
     const trainerInfo = getTrainerInfo(trainerId)
@@ -33,12 +33,9 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
         const pokemon = trainerInfo.data!.pokemon
 
         return (
-            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
-                const { width } = event.nativeEvent.layout
-                setAvailableWidth(width)
-            }}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
+                    <Container>
                         <View style={tw`flex-col justify-center items-center`}>
                             { /* General Information */}
                             <View style={tw`m-4 justify-center items-start web:items-center web:flex-1 android:w-full ios:w-full android:px-2 ios:px-2`}>
@@ -72,7 +69,7 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
                             {/* Pokemon */}
                             <Card style={tw.style(
                                 `m-4 flex-shrink items-start`,
-                                availableWidth < 1400 ? `w-full` : `mx-20`
+                                dimensions.width < 1400 ? `w-full` : `mx-20`
                             )}>
                                 <Text style={tw`text-lg self-start font-bold`}>Pokémon</Text>
 

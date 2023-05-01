@@ -27,7 +27,7 @@ export default function AuthenticatedFlow() {
                 <AuthenticatedStack.Screen name='home' component={Home} options={{ title: 'Home', headerShown: false }} />
                 <AuthenticatedStack.Screen name='trainer' component={TrainerInfo} />
                 <AuthenticatedStack.Screen name='gym' component={GymInfo} />
-                <AuthenticatedStack.Screen name='addTrainer' component={AddTrainer} />
+                <AuthenticatedStack.Screen name='addTrainer' component={AddTrainer} options={{ title: 'Add Trainer' }} />
             </AuthenticatedStack.Group>
 
             <AuthenticatedStack.Group screenOptions={{presentation: 'modal'}}>

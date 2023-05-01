@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import Loader from '../components/core/Loader';
-import {View, Text, ScrollView} from "react-native";
+import {View, Text, ScrollView, useWindowDimensions} from "react-native";
 import {getGymInfo} from "../../services/GymService";
 import TrainerCard from "../components/pokemon/TrainerCard";
 import Divider from "../components/core/Divider";
@@ -12,7 +12,7 @@ import Card from "../components/Card";
 
 export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute, 'gym'>) {
     const gymNumber = route.params.number
-    const [availableWidth, setAvailableWidth] = useState(0)
+    const dimensions = useWindowDimensions()
 
     const gymInfo = getGymInfo(gymNumber)
     useEffect(() => {
@@ -31,12 +31,9 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
         const members = gymInfo.data!.members
 
         return (
-            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
-                const { width } = event.nativeEvent.layout
-                setAvailableWidth(width)
-            }}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
+                    <Container>
                         <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
                             { /* General Information */}
                             <View style={tw`m-4 justify-center items-start web:items-center android:w-full ios:w-full android:px-2 ios:px-2`}>
@@ -63,7 +60,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                             { members.length > 0 && (
                                 <Card style={tw.style(
                                     `m-4 flex-shrink items-start`,
-                                    availableWidth < 1400 ? `w-full` : `mx-20`
+                                    dimensions.width < 1400 ? `w-full` : `mx-20`
                                 )}>
                                     <Text style={tw`text-lg self-start font-bold`}>Members</Text>
 

@@ -70,12 +70,22 @@ function processPath(path: string | null): Array<DeepLinkAction> {
                     }
                     case 'trainer': {
                         const param = pathComponents[idx++] // this entry expects a param
+                        if (param == 'add') {
+                            results.push({ action: StackActions.push('addTrainer') })
+                            break
+                        }
+
                         const params: AppRoute['trainer'] = {id: parseInt(param)}
                         results.push({ action: StackActions.push(target, params) })
                         break
                     }
                     case 'gym': {
                         const param = pathComponents[idx++] // this entry expects a param
+                        if (param == 'add') {
+                            results.push({ action: StackActions.push('addGym') })
+                            break
+                        }
+
                         const params: AppRoute['gym'] = {number: parseInt(param)}
                         results.push({ action: CommonActions.navigate(target, params) })
                     }

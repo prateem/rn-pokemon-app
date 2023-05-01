@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import {StackScreenProps} from '@react-navigation/stack'
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
 import {getPokemonDetails} from '../../services/PokemonService'
-import {Image, ScrollView, Text, View} from 'react-native'
+import {Image, ScrollView, Text, useWindowDimensions, View} from 'react-native'
 import Loader from '../components/core/Loader'
 import EvolutionChainView from "../components/pokemon/EvolutionChain";
 import Collapsible from "../components/Collapsible";
@@ -14,8 +14,8 @@ import Card from "../components/Card";
 
 export default function PokemonInfo({ navigation, route }: StackScreenProps<AppRoute, 'pokemon'>) {
     const pokemonNumber = route.params.number
+    const dimensions = useWindowDimensions()
 
-    const [availableWidth, setAvailableWidth] = useState(0)
     const pokemonInfo = getPokemonDetails(pokemonNumber)
     useEffect(() => {
         navigation.setOptions({
@@ -30,12 +30,9 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
     } else {
         const data = pokemonInfo.data!
         return (
-            <View style={tw`flex-1 bg-white`} onLayout={(event) => {
-                const { width } = event.nativeEvent.layout
-                setAvailableWidth(width)
-            }}>
+            <View style={tw`flex-1 bg-white`}>
                 <ScrollView>
-                    <Container style={tw.style(availableWidth > 1400 && `mx-80`)}>
+                    <Container>
                         <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
                             { /* Image and type badges */ }
                             <View style={tw`m-4 justify-center items-center`}>
@@ -62,7 +59,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                             <EvolutionChainView
                                 data={data.evolutionChain}
                                 viewing={pokemonNumber}
-                                style={tw.style(availableWidth < 1400 ? `w-full` : `mx-20`)}
+                                style={tw.style(dimensions.width < 1400 ? `w-full` : `mx-20`)}
                             />
 
                             <Card style={tw.style(`m-4 flex-shrink items-start w-full`)}>

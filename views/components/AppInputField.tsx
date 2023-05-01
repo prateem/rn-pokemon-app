@@ -5,9 +5,8 @@ import tw from "twrnc";
 
 type AppInputFieldProps = {
     label?: string | undefined
-    labelProps?: ViewProps | undefined,
-    labelStyle?: ViewStyle,
-    inputProps?: TextInputProps | undefined
+    labelProps?: (ViewProps & PropsWithStyle) | undefined,
+    inputProps?: (TextInputProps & PropsWithStyle) | undefined
 } & PropsWithStyle
 
 export default function AppInputField(props: AppInputFieldProps) {
@@ -17,17 +16,28 @@ export default function AppInputField(props: AppInputFieldProps) {
         inputProps = textInputProps
     }
 
+    let labelProps: any | undefined = undefined
+    if (props.labelProps) {
+        const { style: ignoredStyle, ...textProps } = props.labelProps
+        labelProps = textProps
+    }
+
     return (
         <View style={tw.style(props.style)}>
             {props.label && (
-                <Text style={tw.style(`text-base font-bold`, props.labelStyle)}>{props.label}</Text>
+                <Text
+                    {...labelProps}
+                    style={tw.style(`text-base font-bold`, props.labelProps?.style)}
+                >
+                    {props.label}
+                </Text>
             )}
 
             <TextInput
                 {...inputProps}
                 style={tw.style(
-                    `my-2 p-2 h-10 rounded bg-white border border-gray-200 self-center min-w-full`,
-                    props.style
+                    `h-10 px-2 rounded bg-white border border-gray-200 self-center min-w-full`,
+                    props.inputProps?.style
                 )} />
         </View>
     )
