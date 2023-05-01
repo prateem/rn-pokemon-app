@@ -7,7 +7,7 @@ import {
     KeyboardAvoidingView,
     InteractionManager, FlatList
 } from 'react-native'
-import {usePokemon} from '../../services/PokemonService'
+import {POKEDEX_LIMIT, usePokemon} from '../../services/PokemonService'
 import PokemonCard from '../components/pokemon/PokemonCard'
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -88,7 +88,7 @@ export default function Pokedex() {
                         }
                     }}
                     initialScrollIndex={((): number => {
-                        if (pokemonToScrollTo && pokemonToScrollTo > 0 && pokemonToScrollTo <= 251 && grid.columns > 0) {
+                        if (pokemonToScrollTo && pokemonToScrollTo > 0 && pokemonToScrollTo <= POKEDEX_LIMIT && grid.columns > 0) {
                             const containingRow = Math.floor(pokemonToScrollTo / grid.columns)
                             pokemonToScrollTo = null
                             return containingRow - Math.floor(grid.rows / 2)

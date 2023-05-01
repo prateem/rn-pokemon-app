@@ -3,6 +3,8 @@ import {Evolution, EvolutionChain, Pokemon, PokemonDetails, PokemonMove, Pokemon
 import axios from 'axios';
 import {useQuery} from "react-query";
 
+export const POKEDEX_LIMIT = 251
+
 const dataStore: DataStore = dataInstance.inMemory
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
 const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entries"
@@ -20,7 +22,7 @@ class PokemonService {
         }
 
         const results: Array<Pokemon> = [];
-        let data = await axios.get("https://pokeapi.co/api/v2/pokemon/?limit=251")
+        let data = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=${POKEDEX_LIMIT}`)
 
         if (data && data.data.results) {
             await Promise.all(data.data.results.map((detail: any) => axios.get(detail.url)))
@@ -135,7 +137,6 @@ class PokemonService {
 
             let trigger: string | undefined = undefined
             let details = e.evolution_details[0]
-            console.log(details)
             if (details.trigger.name == 'level-up') {
                 const lvl = details.min_level
 
@@ -146,7 +147,7 @@ class PokemonService {
                     const happiness = details.min_happiness
 
                     if (happiness && time.length > 0) {
-                        trigger = `Lv. up (happiness @ ${time})`
+                        trigger = `Lv. up (happiness/${time})`
                     } else if (happiness) {
                         trigger = `Lv. up (happiness)`
                     }
@@ -162,9 +163,7 @@ class PokemonService {
                 }
             }
 
-            if (fromNumber <= 251 && toNumber <= 251) {
-                console.log("from", fromNumber, "to", toNumber, "using trigger", trigger)
-
+            if (fromNumber <= POKEDEX_LIMIT && toNumber <= POKEDEX_LIMIT) {
                 evolutions.push({ from: fromNumber, to: toNumber, trigger })
             }
 

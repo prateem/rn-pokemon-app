@@ -22,6 +22,7 @@ class InMemoryDataStore implements DataStore {
     async read<T>(key: string): Promise<T | null> {
         const entry = this.items[key]
         if (entry && entry as T) {
+            console.log("found in memory", key)
             return entry
         }
 
