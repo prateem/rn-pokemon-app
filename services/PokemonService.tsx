@@ -3,7 +3,7 @@ import {Evolution, EvolutionChain, Pokemon, PokemonDetails, PokemonMove, Pokemon
 import axios from 'axios';
 import {useQuery} from "react-query";
 
-export const POKEDEX_LIMIT = 251
+export const POKEDEX_LIMIT: number = 251
 
 const dataStore: DataStore = dataInstance.inMemory
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
