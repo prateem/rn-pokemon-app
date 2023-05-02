@@ -1,5 +1,5 @@
 import {PropsWithStyle} from "../../App";
-import {Text, TextInput, TextInputProps, View, ViewProps, ViewStyle} from "react-native";
+import {Text, TextInput, TextInputProps, View, ViewProps} from "react-native";
 import React from "react";
 import tw from "twrnc";
 
@@ -10,16 +10,17 @@ type AppInputFieldProps = {
 } & PropsWithStyle
 
 export default function AppInputField(props: AppInputFieldProps) {
+    let labelProps: any | undefined = undefined
     let inputProps: any | undefined = undefined;
-    if (props.inputProps) {
-        const { style: ignoredStyle, ...textInputProps } = props.inputProps
-        inputProps = textInputProps
+
+    if (props.labelProps) {
+        const { style, ...textProps } = props.labelProps
+        labelProps = textProps
     }
 
-    let labelProps: any | undefined = undefined
-    if (props.labelProps) {
-        const { style: ignoredStyle, ...textProps } = props.labelProps
-        labelProps = textProps
+    if (props.inputProps) {
+        const { style, ...textInputProps } = props.inputProps
+        inputProps = textInputProps
     }
 
     return (

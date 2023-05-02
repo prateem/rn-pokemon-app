@@ -19,7 +19,7 @@ export default function AppMenu({ navigation }: AppMenuProps) {
 
     return (
         <SafeAreaView>
-            <View style={tw`self-start`}>
+            <View style={tw`self-start w-full`}>
                 <Pressable onPress={() => {
                     navigation.push('addTrainer')
                 }}>
@@ -27,23 +27,26 @@ export default function AppMenu({ navigation }: AppMenuProps) {
                         <Text style={tw.style(
                             `text-base p-3`,
                             // @ts-ignore
-                            state.hovered && 'bg-gray-200'
+                            state.hovered && 'bg-gray-200',
+                            state.pressed && `opacity-50`
                         )}>Add a Trainer</Text>
                     )}
                 </Pressable>
 
                 <Divider style={tw`my-4`} />
 
-                <AppButton text={"Logout"} onPress={() => {
-                    authenticator.logout()
-                    appState.update({
-                        user: null,
-                        sessionToken: null
-                    })
-                    InteractionManager.runAfterInteractions(() => {
-                        navigation.dispatch(CommonActions.reset({routes: [{name: 'onboarding'}]}))
-                    })
-                }} />
+                <AppButton
+                    text={"Logout"}
+                    onPress={() => {
+                        authenticator.logout()
+                        appState.update({
+                            user: null,
+                            sessionToken: null
+                        })
+                        InteractionManager.runAfterInteractions(() => {
+                            navigation.dispatch(CommonActions.reset({routes: [{name: 'onboarding'}]}))
+                        })
+                    }} />
             </View>
         </SafeAreaView>
     )

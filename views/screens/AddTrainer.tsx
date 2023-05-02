@@ -140,7 +140,8 @@ export default function AddTrainer() {
                                                         <Text style={tw.style(
                                                             `text-base italic p-4 rounded-2`,
                                                             // @ts-ignore
-                                                            state.hovered && `bg-gray-300`
+                                                            state.hovered && `bg-gray-300`,
+                                                            state.pressed && `opacity-50`
                                                         )}>+ Select a Pokémon...</Text>
                                                     )}
                                                 </Pressable>
