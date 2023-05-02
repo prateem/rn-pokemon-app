@@ -36,6 +36,7 @@
     "react-native-web": "~0.18.10",
     "react-query": "^3.39.3",
     "rxjs": "^7.8.0",
+    "sweetalert2": "^11.7.3",
     "twrnc": "^3.6.0"
   },
   "devDependencies": {

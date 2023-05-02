@@ -1,6 +1,5 @@
 import React, {useRef, useState} from "react";
 import {
-    Alert,
     Image,
     InteractionManager,
     KeyboardAvoidingView,
@@ -24,10 +23,11 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import MenuBackdrop from "../components/core/MenuBackdrop";
 import AppMenu from "../components/core/AppMenu";
 import Pokedex from "../tabs/Pokedex";
-import {Pokemon} from "../../models/pokemon";
+import {Pokemon} from "../../models/Pokemon";
 import AppButton from "../components/AppButton";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {useTrainers} from "../../services/TrainerService";
+import Alert from "../components/core/Alert";
 
 const exclusions: string[] = Array.prototype
     .concat(trainers.gymLeaders, trainers.eliteFour)
@@ -169,10 +169,12 @@ export default function AddTrainer() {
                                                                         onPress: () => {
                                                                             // No-op
                                                                         },
+                                                                        swalType: 'deny',
                                                                         style: 'cancel',
                                                                     },
                                                                     {
                                                                         text: 'Remove',
+                                                                        swalType: 'cancel',
                                                                         onPress: () => {
                                                                             setRoster([
                                                                                 ...Array.prototype.concat(
