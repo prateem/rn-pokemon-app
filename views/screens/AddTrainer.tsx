@@ -6,7 +6,7 @@ import {
     Platform,
     Pressable,
     ScrollView,
-    Text,
+    Text, useWindowDimensions,
     View
 } from "react-native";
 import tw from "twrnc";
@@ -20,8 +20,7 @@ import PokemonCard from "../components/pokemon/PokemonCard";
 import {usePokemon} from "../../services/PokemonService";
 import Loader from "../components/core/Loader";
 import BottomSheet from "@gorhom/bottom-sheet";
-import MenuBackdrop from "../components/core/MenuBackdrop";
-import AppMenu from "../components/core/AppMenu";
+import SheetBackdrop from "../components/core/MenuBackdrop";
 import Pokedex from "../tabs/Pokedex";
 import {Pokemon} from "../../models/Pokemon";
 import AppButton from "../components/AppButton";
@@ -37,6 +36,7 @@ const availableClassifications = Object.keys(TRAINER_IMAGES)
     .filter(key => !exclusions.includes(key))
 
 export default function AddTrainer() {
+    const dimensions = useWindowDimensions()
     const headerHeight = useHeaderHeight()
 
     const pokemon = usePokemon()
@@ -57,6 +57,8 @@ export default function AddTrainer() {
     if (pokemon.isLoading || pokemon.isIdle) {
         return <Loader />
     }
+
+    const sheetHeight: number = 0.85
 
     return (
         <KeyboardAvoidingView
@@ -169,12 +171,12 @@ export default function AddTrainer() {
                                                                         onPress: () => {
                                                                             // No-op
                                                                         },
-                                                                        swalType: 'deny',
+                                                                        swalType: 'cancel',
                                                                         style: 'cancel',
                                                                     },
                                                                     {
                                                                         text: 'Remove',
-                                                                        swalType: 'cancel',
+                                                                        swalType: 'deny',
                                                                         onPress: () => {
                                                                             setRoster([
                                                                                 ...Array.prototype.concat(
@@ -209,9 +211,15 @@ export default function AddTrainer() {
                     ref={sheet}
                     index={0}
                     style={tw`bg-white rounded-3xl shadow-black shadow-opacity-15 shadow-radius-1 shadow-offset-[0]/[-2]`}
-                    enablePanDownToClose={false}
-                    backdropComponent={MenuBackdrop}
-                    snapPoints={['95%']}
+                    backdropComponent={SheetBackdrop}
+                    snapPoints={[`${sheetHeight * 100}%`]}
+                    handleComponent={() => {
+                        return (
+                            <Pressable onPress={() => sheet.current?.close()}>
+                                <View style={tw`w-10 h-1 my-4 bg-gray-500 rounded-2xl self-center`} />
+                            </Pressable>
+                        )
+                    }}
                     onChange={(index) => {
                         if (index == -1) {
                             // dragged down to close
@@ -220,7 +228,7 @@ export default function AddTrainer() {
                     }}>
                     <KeyboardAvoidingView
                         style={tw`flex-1`}
-                        keyboardVerticalOffset={headerHeight + 32} // corresponds to the value of mb-8 for the Pokédex
+                        keyboardVerticalOffset={headerHeight + dimensions.height * (1.0 - sheetHeight)}
                         behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
                         <Pokedex
                             isNested={true}

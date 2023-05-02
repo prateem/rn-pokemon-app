@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Image, Pressable, View, Text} from 'react-native';
 import type {StackScreenProps} from '@react-navigation/stack'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {processDeepLink} from "../../core/DeepLink";
 
 import {AppRoute} from "./AuthenticatedFlow";
