@@ -168,15 +168,13 @@ export default function AddTrainer() {
                                                                 [
                                                                     {
                                                                         text: 'No',
-                                                                        onPress: () => {
-                                                                            // No-op
-                                                                        },
                                                                         swalType: 'cancel',
                                                                         style: 'cancel',
                                                                     },
                                                                     {
                                                                         text: 'Remove',
                                                                         swalType: 'deny',
+                                                                        style: 'destructive',
                                                                         onPress: () => {
                                                                             setRoster([
                                                                                 ...Array.prototype.concat(
