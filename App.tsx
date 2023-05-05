@@ -8,6 +8,7 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import {ViewStyle} from "react-native";
 import { useDeviceContext } from 'twrnc';
 import tw from "twrnc";
+import {ReactQueryDevtools} from "react-query/devtools";
 
 const queryClient = new QueryClient()
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
                     <AppRouter />
 
                     <StatusBar style="auto" />
+                    <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
             </AppStateProvider>
         </GestureHandlerRootView>
