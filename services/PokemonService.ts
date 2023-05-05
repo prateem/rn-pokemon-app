@@ -1,13 +1,23 @@
 import dataInstance, {DataStore} from "../core/DataStore";
-import {Evolution, EvolutionChain, Pokemon, PokemonDetails, PokemonMove, PokemonMoveDetailed} from "../models/Pokemon";
+import {
+    Evolution,
+    EvolutionChain,
+    PokemonBaseInfo,
+    PokemonDetails,
+    PokemonMove,
+    PokemonMoveData,
+    Pokemon
+} from "../models/Pokemon";
 import axios from 'axios';
 import {useQuery} from "react-query";
+import apiClient from "../core/ApiClient";
 
 export const POKEDEX_LIMIT: number = 251
 
 const dataStore: DataStore = dataInstance.inMemory
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
-const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entries"
+const pokemonBaseInfoKeyBase: string = "Nascent-Pokemon-BaseInfo-Entry"
+const pokemonDetailsKeyBase: string = "Nascent-Pokemon-Detail-Entry"
 const evolutionChainKeyBase: string = "Nascent-Pokemon-Evolution-Chain"
 const moveDataKeyBase: string = "Nascent-Pokemon-Move-Data"
 
@@ -15,44 +25,78 @@ class PokemonService {
 
     // API CALLS
     async fetchPokemon(): Promise<Array<Pokemon>> {
-        const insecureStore = dataInstance.insecure
-        let cached = await insecureStore.read<Array<Pokemon>>(pokemonDataKey)
+        // Override the target data store to the insecure store
+        const dataStore = dataInstance.inMemory
+
+        let cached = await dataStore.read<Array<Pokemon>>(pokemonDataKey)
         if (cached) {
             return cached
         }
 
         const results: Array<Pokemon> = [];
-        let data = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=${POKEDEX_LIMIT}`)
+        let data = await apiClient.get('pokemon-list', `https://pokeapi.co/api/v2/pokemon/?limit=${POKEDEX_LIMIT}`)
 
         if (data && data.data.results) {
-            await Promise.all(data.data.results.map((detail: any) => axios.get(detail.url)))
-                .then((detailedPokemonList) => {
-                    detailedPokemonList.forEach((pokemonData) => {
-                        let pokemon = pokemonData.data
-                        results.push(
-                            {
-                                number: pokemon.id,
-                                name: pokemon.name.toTitleCase(),
-                                types: pokemon.types.map((type: any) => type.type.name),
-                                abilities: pokemon.abilities.map((ability: any) => ability.ability.name),
-                                moves: mapMoves(pokemon.moves),
-                                spriteUrl: pokemon.sprites.other['official-artwork'].front_default
-                            }
-                        )
-                    })
-                })
-                .then((_) => {
-                    insecureStore.write(pokemonDataKey, results)
-                })
+            data.data.results.forEach((info: any) => {
+                const number = info.url.replace(/^\/+|\/+$/g, '')
+                    .split('/')
+                    .pop()
+                const name = info.name.toTitleCase()
+                results.push({ name, number, detailUrl: info.url })
+            })
         }
+
+        await dataStore.write(pokemonDataKey, results)
 
         return results
     }
 
-    async fetchPokemonDetails(pokemon: Pokemon): Promise<PokemonDetails> {
+    async hydrateBaseInfo(pokemon: Pokemon): Promise<PokemonBaseInfo> {
+        if (pokemon.baseInfo) {
+            return pokemon.baseInfo
+        }
+
+        // Override the target data store to the insecure store
+        const dataStore = dataInstance.inMemory
+
+        let key = pokemonBaseInfoKeyBase + `_${pokemon.number}`
+        let cached = await dataStore.read<PokemonBaseInfo>(key)
+        if (cached) {
+            pokemon.baseInfo = cached
+            return cached
+        }
+
+        const request = await apiClient.get(key, pokemon.detailUrl)
+        if (request.data) {
+            const detail = request.data
+            const baseInfo: PokemonBaseInfo = {
+                abilities: detail.abilities.map((abilityEntry: any) => abilityEntry.ability.name),
+                moves: mapMoves(detail.moves),
+                spriteUrl: detail.sprites.other['official-artwork'].front_default,
+                types: detail.types.map((typeEntry: any) => typeEntry.type.name)
+            }
+            await dataStore.write(key, baseInfo)
+            pokemon.baseInfo = baseInfo
+        }
+
+        // will cause React Query fail if request did not complete
+        return pokemon.baseInfo!
+    }
+
+    async hydrateDetails(pokemon: Pokemon): Promise<PokemonDetails> {
+        let baseInfo = pokemon.baseInfo
+        if (!baseInfo) {
+            baseInfo = await this.hydrateBaseInfo(pokemon)
+        }
+
+        if (pokemon.details) {
+            return pokemon.details
+        }
+
         let key = pokemonDetailsKeyBase + `_${pokemon.number}`
         let cached = await dataStore.read<PokemonDetails>(key)
         if (cached) {
+            pokemon.details = cached
             return cached
         }
 
@@ -92,13 +136,14 @@ class PokemonService {
             }
         }
 
-        const moves = await Promise.all(
-            pokemon.moves.map(it => getMoveData(it))
+        await Promise.all(
+            baseInfo.moves
+                .map(it => hydrateMoveData(it))
         )
 
-        const details = {pokemon, descriptions, evolutionChain, moves}
-
+        const details: PokemonDetails = {descriptions, evolutionChain}
         await dataStore.write(key, details)
+        pokemon.details = details
 
         return details
     }
@@ -200,21 +245,27 @@ function mapMoves(entries: any): PokemonMove[] {
         })
 }
 
-async function getMoveData(move: PokemonMove): Promise<PokemonMoveDetailed> {
+async function hydrateMoveData(move: PokemonMove): Promise<PokemonMoveData> {
+    if (move.data) {
+        return move.data
+    }
+
     const moveId = move.url
         .replace(/^\/+|\/+$/g, '')
         .split('/')
         .pop()
 
     const key = moveDataKeyBase + `_${moveId}`
-    const cached = await dataStore.read<PokemonMoveDetailed>(key)
+    const cached = await dataStore.read<PokemonMoveData>(key)
     if (cached) {
+        move.data = cached
         return cached
     }
 
-    const allData = await axios.get(move.url)
-    const data: PokemonMoveDetailed = { move, data: { type: allData.data.type.name } }
+    const allData = await apiClient.get(key, move.url)
+    const data: PokemonMoveData = { type: allData.data.type.name }
     await dataStore.write(key, data)
+    move.data = data
 
     return data
 }
@@ -225,15 +276,31 @@ export function usePokemon() {
     return useQuery<Pokemon[], Error>('pokemon', service.fetchPokemon)
 }
 
-export function getPokemonDetails(pokemonNumber: number) {
+export function getPokemonWithBaseInfo(pokemonNumber: number) {
     const pokemonData = usePokemon()
     const pokemon = pokemonData.data
         ?.find((p: Pokemon) => p.number == pokemonNumber)
 
-    return useQuery<PokemonDetails, Error>({
+    return useQuery<Pokemon, Error>({
+        queryKey: ['pokemon-base-info', pokemonNumber],
+        queryFn: async () => {
+            await service.hydrateBaseInfo(pokemon!)
+            return pokemon!
+        },
+        enabled: !!pokemon
+    })
+}
+
+export function getPokemonWithFullDetails(pokemonNumber: number) {
+    const pokemonData = usePokemon()
+    const pokemon = pokemonData.data
+        ?.find((p: Pokemon) => p.number == pokemonNumber)
+
+    return useQuery<Pokemon, Error>({
         queryKey: ['pokemon-details', pokemonNumber],
         queryFn: async () => {
-            return service.fetchPokemonDetails(pokemon!)
+            await service.hydrateDetails(pokemon!)
+            return pokemon!
         },
         enabled: !!pokemon
     })

@@ -79,7 +79,7 @@ export default function AddTrainer() {
                         <Picker
                             style={tw`flex-1 self-center my-2 p-2 web:h-10 android:h-10 rounded bg-white border border-gray-200`}
                             selectedValue={classification}
-                            onValueChange={(value, index) => setClassification(value)}>
+                            onValueChange={(value: string, index: number) => setClassification(value)}>
                             {availableClassifications.map((c, index) => (
                                 <Picker.Item key={index} label={c.toTitleCase()} value={c} style={tw`text-sm`} />
                             ))}

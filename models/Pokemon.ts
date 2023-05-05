@@ -1,28 +1,32 @@
 export interface Pokemon {
     number: number
     name: string
+    detailUrl: string
+    baseInfo?: PokemonBaseInfo | undefined
+    details?: PokemonDetails | undefined
+}
+
+export interface PokemonBaseInfo {
     types: Array<string>
     abilities: Array<string>
     moves: Array<PokemonMove>
     spriteUrl: string
 }
 
+export interface PokemonDetails {
+    descriptions: Array<string>
+    evolutionChain: EvolutionChain
+}
+
 export interface PokemonMove {
     name: string
     learnedAtLevel: number
     url: string
+    data?: PokemonMoveData | undefined
 }
 
-export interface PokemonMoveDetailed {
-    move: PokemonMove
-    data: { type: string }
-}
-
-export interface PokemonDetails {
-    pokemon: Pokemon,
-    descriptions: Array<string>
-    evolutionChain: EvolutionChain,
-    moves: Array<PokemonMoveDetailed>
+export interface PokemonMoveData {
+    type: string
 }
 
 export interface EvolutionChain {

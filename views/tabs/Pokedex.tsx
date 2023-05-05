@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react'
+import React, {useState} from 'react'
 import {
     Text,
     View,
@@ -8,7 +8,7 @@ import {
     InteractionManager, FlatList
 } from 'react-native'
 import {POKEDEX_LIMIT, usePokemon} from '../../services/PokemonService'
-import PokemonCard from '../components/pokemon/PokemonCard'
+import PokemonCard, {usePokemonFullCardSize} from '../components/pokemon/PokemonCard'
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack'
 import {AppRoute} from "../../flows/authenticated/AuthenticatedFlow";
@@ -33,14 +33,7 @@ export default function Pokedex(props: PokedexProps) {
     const [searched, setSearched] = useState<string>("")
     const [grid, setGrid] = useState({ rows: 1, columns: 1 })
 
-    const pokemonCardSize = useMemo(() => {
-        // margin(card) + borders(card) + padding(card) + margin(image) + width(image) + extra space for padding
-        const width = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 16
-
-        // margin(card) + borders(card) + padding(card) + margin(image) + height(image) + lineHeight(text)
-        const height = 16 + 2 + 24 + 16 + (Platform.OS == 'web' ? 120 : 100) + 48
-        return { width, height }
-    }, [Platform.OS])
+    const pokemonCardSize = usePokemonFullCardSize()
 
     const navigation = useNavigation<StackNavigationProp<AppRoute>>()
     const headerHeight = useHeaderHeight()
@@ -62,7 +55,7 @@ export default function Pokedex(props: PokedexProps) {
                     return true
                 }
 
-                return pokemon.types
+                return (pokemon.baseInfo?.types || [])
                     .filter((type) => (type.match(re) || []).length > 0)
                     .length > 0
             }) || []
@@ -86,6 +79,7 @@ export default function Pokedex(props: PokedexProps) {
                             columns: Math.floor(availableWidth / pokemonCardSize.width)
                         })
                     }}
+                    initialNumToRender={40}
                     numColumns={grid.columns}
                     key={grid.columns}
                     getItemLayout={(data, rowIndex) => {
