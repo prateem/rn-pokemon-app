@@ -9,6 +9,7 @@ import Divider from "../components/core/Divider";
 import tw from "twrnc";
 import Container from "../components/Container";
 import Card from "../components/Card";
+import Badge from '../components/Badge';
 
 export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute, 'gym'>) {
     const gymNumber = route.params.number
@@ -17,7 +18,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
     const gymInfo = getGymInfo(gymNumber)
     useEffect(() => {
         navigation.setOptions({
-            title: gymInfo.isSuccess ? `${gymInfo.data.gym.location} - ${gymInfo.data.gym.badge} Badge` : "#" + gymNumber
+            title: gymInfo.isSuccess ? `${gymInfo.data.gym.location} Gym - ${gymInfo.data.gym.badge} Badge` : "#" + gymNumber
         })
     }, [gymInfo])
 
@@ -37,7 +38,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
                         <View style={tw`flex-col web:flex-row web:flex-wrap justify-center items-center`}>
                             { /* General Information */}
                             <View style={tw`m-4 justify-center items-start web:items-center android:w-full ios:w-full android:px-2 ios:px-2`}>
-                                <Text style={tw`text-3xl font-bold text-center`}>{gym.location}</Text>
+                                <Text style={tw`text-3xl font-bold text-center`}>{gym.location} Gym</Text>
 
                                 <Text style={tw`text-base my-2`}>{gym.badge} Badge</Text>
 
@@ -49,7 +50,7 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
 
                                 <Divider style={tw`my-2`} />
 
-                                <Text style={tw`text-sm`}>Gym Leader</Text>
+                                <Badge text='Leader' textStyle={tw`text-sm`} />
 
                                 <TrainerCard
                                     trainer={leader}
