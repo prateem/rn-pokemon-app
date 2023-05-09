@@ -53,7 +53,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                         return <Badge
                                             key={index}
                                             text={type.toTitleCase()}
-                                            colorHex={getColorForType(type)}
+                                            badgeColor={getColorForType(type)}
                                             minWidth={80} />
                                     })}
                                 </View>
@@ -87,7 +87,7 @@ export default function PokemonInfo({ navigation, route }: StackScreenProps<AppR
                                                         <View key={index} style={tw.style(`flex-row px-2 py-1`, index % 2 == 0 ? `bg-gray-200` : `bg-gray-100`)}>
                                                             <Text style={tw`text-sm flex-3 self-center`}>{move.name.toTitleCase()}</Text>
                                                             <View style={tw`flex-2 self-center`}>
-                                                                <Badge text={moveData.type.toTitleCase()} colorHex={getColorForType(moveData.type)} minWidth={80} />
+                                                                <Badge text={moveData.type.toTitleCase()} badgeColor={getColorForType(moveData.type)} minWidth={80} />
                                                             </View>
                                                             <Text style={tw`text-sm flex-2 text-center self-center`}>{move.learnedAtLevel}</Text>
                                                         </View>

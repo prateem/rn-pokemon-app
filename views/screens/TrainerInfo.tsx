@@ -58,7 +58,7 @@ export default function TrainerInfo({ navigation, route }: StackScreenProps<AppR
 
                                                 <Badge
                                                     text={trainer.specialty.toTitleCase()}
-                                                    colorHex={getColorForType(trainer.specialty)}
+                                                    badgeColor={getColorForType(trainer.specialty)}
                                                     minWidth={80} />
                                             </View>
                                         )}

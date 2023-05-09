@@ -230,7 +230,7 @@ function mapMoves(entries: any): PokemonMove[] {
                 return it.move_learn_method.name
                     && it.version_group.name
                     && it.move_learn_method.name == 'level-up'
-                    && ['crystal', 'gold-silver'].includes(it.version_group.name)
+                    // && ['crystal', 'gold-silver'].includes(it.version_group.name)
             }).reverse()[0]
 
             if (!details) {
@@ -264,9 +264,9 @@ async function hydrateMoveData(move: PokemonMove): Promise<PokemonMoveData> {
 
     const allData = await apiClient.get(key, move.url)
     const data: PokemonMoveData = { type: allData.data.type.name }
-    await dataStore.write(key, data)
     move.data = data
 
+    await dataStore.write(key, data)
     return data
 }
 

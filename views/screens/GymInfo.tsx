@@ -50,7 +50,10 @@ export default function GymInfo({ navigation, route }: StackScreenProps<AppRoute
 
                                 <Divider style={tw`my-2`} />
 
-                                <Badge text='Leader' textStyle={tw`text-sm`} />
+                                <Badge
+                                    badgeColor={{ start: 'gold', end: 'silver', orientation: 'horizontal' }}
+                                    text='Leader'
+                                    textStyle={tw`text-sm`} />
 
                                 <TrainerCard
                                     trainer={leader}
