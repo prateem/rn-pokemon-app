@@ -12,7 +12,18 @@ import axios from 'axios';
 import {useQuery} from "react-query";
 import apiClient from "../core/ApiClient";
 
-export const POKEDEX_LIMIT: number = 251
+const generationPokedexLimits = {
+    1: 151,
+    2: 251,
+    3: 386,
+    4: 493,
+    5: 649,
+    6: 721,
+    7: 809,
+    8: 905,
+    9: 1010
+}
+export const POKEDEX_LIMIT: number = generationPokedexLimits[4]
 
 const dataStore: DataStore = dataInstance.inMemory
 const pokemonDataKey: string = "Nascent-Pokemon-Data"
